@@ -1,9 +1,10 @@
 'use client';
 
 import Image from 'next/image';
-import { ShoppingCart, Star, Plus, Minus } from 'lucide-react';
+import { ShoppingCart, Star, Plus, Minus, ArrowLeft } from 'lucide-react';
 import { useState } from 'react';
 import { Product } from '@/src/types/product';
+import Link from 'next/link';
 
 export default function ProductDetailClient({ product }: { product: Product }) {
   const [quantity, setQuantity] = useState(1);
@@ -23,7 +24,18 @@ export default function ProductDetailClient({ product }: { product: Product }) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
+         {/* Back Button */}
+      <div className="mb-6">
+        <Link
+          href="/products"
+          className="inline-flex items-center gap-2 text-cyan-600 font-medium hover:underline"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Products
+        </Link>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+       
         {/* Image Gallery Section */}
         <div className="space-y-4">
           {/* Main Image */}

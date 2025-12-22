@@ -26,6 +26,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     return 'text-green-600';
   };
 
+
   return (
     <div className="group bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
       {/* Image Section */}
@@ -54,7 +55,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       </Link>
 
       {/* Content Section */}
-      <div className="p-4"> {/* padding কমানো হয়েছে */}
+      <div className="p-4"> 
         <p className="text-xs text-cyan-600 font-semibold uppercase tracking-wide mb-1">
           {product.category}
         </p>
