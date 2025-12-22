@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { ShoppingCart, Star } from 'lucide-react';
+import { ShoppingCart, Star, Eye } from 'lucide-react';
 import { Product } from '../types/product';
 
 interface ProductCardProps {
@@ -27,8 +27,9 @@ export default function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <Link href={`/products/${product.id}`} className="group">
-      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 hover:border-cyan-300">
+    <div className="group bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+      {/* Image Section */}
+      <Link href={`/products/${product.id}`} className="block">
         <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
           <Image
             src={product.image}
@@ -37,80 +38,91 @@ export default function ProductCard({ product }: ProductCardProps) {
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
             className="object-cover group-hover:scale-110 transition-transform duration-500"
           />
-          
+
           {product.featured && (
-            <span className="absolute top-3 left-3 bg-cyan-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-lg">
+            <span className="absolute top-2 left-2 bg-cyan-600 text-white text-xs font-bold px-2 py-1 rounded-full">
               Featured
             </span>
           )}
-          
+
           {product.discount && (
-            <span className="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-lg">
+            <span className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">
               -{product.discount}%
             </span>
           )}
         </div>
+      </Link>
 
-        <div className="p-5">
-          <p className="text-xs text-cyan-600 font-semibold uppercase tracking-wide mb-2">
-            {product.category}
-          </p>
-          
-          <h3 className="font-bold text-gray-900 text-lg leading-tight line-clamp-2 mb-3 group-hover:text-cyan-600 transition-colors">
+      {/* Content Section */}
+      <div className="p-4"> {/* padding কমানো হয়েছে */}
+        <p className="text-xs text-cyan-600 font-semibold uppercase tracking-wide mb-1">
+          {product.category}
+        </p>
+
+        <Link href={`/products/${product.id}`}>
+          <h3 className="font-bold text-gray-900 text-base leading-tight line-clamp-2 mb-2 group-hover:text-cyan-600 transition-colors">
             {product.name}
           </h3>
+        </Link>
 
-          {product.rating && (
-            <div className="flex items-center gap-1 mb-4">
-              {Array.from({ length: 5 }, (_, i) => (
-                <Star
-                  key={i}
-                  className={`w-4 h-4 transition-colors ${
-                    i < Math.floor(product.rating!)
-                      ? 'fill-yellow-400 text-yellow-400'
-                      : i === Math.floor(product.rating!) && product.rating! % 1 >= 0.5
-                      ? 'fill-yellow-400/50 text-yellow-400'
-                      : 'text-gray-300'
-                  }`}
-                />
-              ))}
-              <span className="text-sm text-gray-600 font-medium ml-1">
-                {product.rating}
+        {/* Rating */}
+        {product.rating && (
+          <div className="flex items-center gap-1 mb-3">
+            {Array.from({ length: 5 }, (_, i) => (
+              <Star
+                key={i}
+                className={`w-3.5 h-3.5 ${
+                  i < Math.floor(product.rating!)
+                    ? 'fill-yellow-400 text-yellow-400'
+                    : i === Math.floor(product.rating!) && product.rating! % 1 >= 0.5
+                    ? 'fill-yellow-400/50 text-yellow-400'
+                    : 'text-gray-300'
+                }`}
+              />
+            ))}
+            <span className="text-xs text-gray-600 ml-1">({product.rating})</span>
+          </div>
+        )}
+
+        {/* Price */}
+        <div className="mb-3">
+          {discountedPrice ? (
+            <div className="flex items-center gap-2">
+              <span className="text-xl font-bold text-gray-900">
+                ৳{discountedPrice.toLocaleString()}
               </span>
-            </div>
-          )}
-
-          <div className="space-y-2 mb-4">
-            {discountedPrice ? (
-              <>
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl font-bold text-gray-900">
-                    ৳{discountedPrice.toLocaleString()}
-                  </span>
-                  <span className="text-lg text-gray-500 line-through">
-                    ৳{product.price.toLocaleString()}
-                  </span>
-                </div>
-              </>
-            ) : (
-              <span className="text-2xl font-bold text-gray-900">
+              <span className="text-sm text-gray-500 line-through">
                 ৳{product.price.toLocaleString()}
               </span>
-            )}
-          </div>
+            </div>
+          ) : (
+            <span className="text-xl font-bold text-gray-900">
+              ৳{product.price.toLocaleString()}
+            </span>
+          )}
+        </div>
 
-          <div className="mb-5">
-            <p className={`text-sm font-semibold ${getStockColor(product.stock)}`}>
-              {getStockStatus(product.stock)}
-            </p>
-          </div>
+        {/* Stock Status */}
+        <p className={`text-xs font-medium mb-4 ${getStockColor(product.stock)}`}>
+          {getStockStatus(product.stock)}
+        </p>
 
-          <button className="w-full bg-gradient-to-r from-cyan-600 to-cyan-700 text-white py-3 px-4 rounded-xl font-semibold hover:from-cyan-700 hover:to-cyan-800 transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-center gap-2 text-sm">
+        {/* Buttons: Add to Cart + View Details */}
+        <div className="grid grid-cols-2 gap-3">
+          <button className="bg-gradient-to-r from-cyan-600 to-cyan-700 text-white py-2.5 px-3 rounded-lg font-medium text-sm hover:from-cyan-700 hover:to-cyan-800 transition-all flex items-center justify-center gap-1.5 shadow-md hover:shadow-lg">
             <ShoppingCart className="w-4 h-4" />
-            Add to Cart
+            Add
           </button>
+
+          <Link
+            href={`/products/${product.id}`}
+            className="border border-cyan-600 text-cyan-600 py-2.5 px-3 rounded-lg font-medium text-sm hover:bg-cyan-50 transition-all flex items-center justify-center gap-1.5"
+          >
+            <Eye className="w-4 h-4" />
+            View
+          </Link>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }

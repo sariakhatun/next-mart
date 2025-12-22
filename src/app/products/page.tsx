@@ -4,7 +4,7 @@ import { Product } from '@/src/types/product';
 async function getProducts(): Promise<Product[]> {
   const res = await fetch('http://localhost:5000/products', {
     cache: 'no-store',
-    next: { revalidate: 0 },  // Next.js 15+ এর জন্য
+    next: { revalidate: 0 },  
   });
   
   if (!res.ok) {
