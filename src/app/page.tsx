@@ -1,9 +1,13 @@
 import React from 'react';
+import Navbar from '../components/Navbar';
+import CategoriesSection from '../components/CategoriesSection';
+import HeroSection from '../components/HeroSection';
 
 const HomePage = () => {
   return (
-    <div>
-      <h1 className='text-2xl text-center my-8'>hello next js</h1>
+    <div className=' px-4 sm:px-6 lg:px-8'>
+      <HeroSection></HeroSection>
+      <CategoriesSection></CategoriesSection>
     </div>
   );
 };

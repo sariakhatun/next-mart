@@ -1,0 +1,193 @@
+{
+  "products": [
+    {
+      "id": "1",
+      "name": "Wireless Bluetooth Headphones",
+      "price": 2499,
+      "stock": 15,
+      "category": "Electronics",
+      "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500",
+      "images": [
+        "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500",
+        "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=500",
+        "https://images.unsplash.com/photo-1545127398-14699f92334b?w=500"
+      ],
+      "description": "Premium wireless headphones with noise cancellation, 30-hour battery life, and superior sound quality. Perfect for music lovers and professionals.",
+      "discount": 10,
+      "rating": 4.5,
+      "featured": true
+    },
+    {
+      "id": "2",
+      "name": "Smart Watch Pro",
+      "price": 4999,
+      "stock": 8,
+      "category": "Electronics",
+      "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500",
+      "images": [
+        "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500",
+        "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=500"
+      ],
+      "description": "Feature-packed smartwatch with fitness tracking, heart rate monitor, GPS, and 7-day battery life. Compatible with iOS and Android.",
+      "discount": 15,
+      "rating": 4.7,
+      "featured": true
+    },
+    {
+      "id": "3",
+      "name": "Leather Backpack",
+      "price": 3499,
+      "stock": 20,
+      "category": "Fashion",
+      "image": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500",
+      "images": [
+        "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500",
+        "https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?w=500"
+      ],
+      "description": "Premium genuine leather backpack with laptop compartment, multiple pockets, and water-resistant design. Perfect for work and travel.",
+      "discount": 0,
+      "rating": 4.3,
+      "featured": false
+    },
+    {
+      "id": "4",
+      "name": "Running Shoes",
+      "price": 1999,
+      "stock": 25,
+      "category": "Sports",
+      "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500",
+      "images": [
+        "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500",
+        "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=500"
+      ],
+      "description": "Lightweight running shoes with breathable mesh, cushioned sole, and excellent grip. Designed for comfort and performance.",
+      "discount": 20,
+      "rating": 4.6,
+      "featured": true
+    },
+    {
+      "id": "5",
+      "name": "Stainless Steel Water Bottle",
+      "price": 799,
+      "stock": 50,
+      "category": "Lifestyle",
+      "image": "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500",
+      "images": [
+        "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500"
+      ],
+      "description": "Insulated stainless steel water bottle keeps drinks cold for 24 hours or hot for 12 hours. Leak-proof and eco-friendly.",
+      "discount": 5,
+      "rating": 4.4,
+      "featured": false
+    },
+    {
+      "id": "6",
+      "name": "Mechanical Keyboard RGB",
+      "price": 5999,
+      "stock": 12,
+      "category": "Electronics",
+      "image": "https://images.unsplash.com/photo-1595225476474-87563907a212?w=500",
+      "images": [
+        "https://images.unsplash.com/photo-1595225476474-87563907a212?w=500",
+        "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500"
+      ],
+      "description": "Premium mechanical keyboard with customizable RGB lighting, tactile switches, and programmable keys. Perfect for gaming and typing.",
+      "discount": 12,
+      "rating": 4.8,
+      "featured": true
+    },
+    {
+      "id": "7",
+      "name": "Sunglasses Classic",
+      "price": 1299,
+      "stock": 30,
+      "category": "Fashion",
+      "image": "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=500",
+      "images": [
+        "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=500"
+      ],
+      "description": "Classic aviator sunglasses with UV400 protection and polarized lenses. Stylish and protective.",
+      "discount": 0,
+      "rating": 4.2,
+      "featured": false
+    },
+    {
+      "id": "8",
+      "name": "Yoga Mat Premium",
+      "price": 1499,
+      "stock": 18,
+      "category": "Sports",
+      "image": "https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=500",
+      "images": [
+        "https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=500"
+      ],
+      "description": "Extra thick yoga mat with non-slip surface, eco-friendly material, and carrying strap included.",
+      "discount": 8,
+      "rating": 4.5,
+      "featured": false
+    },
+    {
+      "id": "9",
+      "name": "Coffee Maker Automatic",
+      "price": 6999,
+      "stock": 0,
+      "category": "Home Appliances",
+      "image": "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6?w=500",
+      "images": [
+        "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6?w=500"
+      ],
+      "description": "Automatic coffee maker with built-in grinder, programmable timer, and thermal carafe. Makes perfect coffee every time.",
+      "discount": 0,
+      "rating": 4.6,
+      "featured": false
+    },
+    {
+      "id": "10",
+      "name": "Wireless Mouse Ergonomic",
+      "price": 899,
+      "stock": 35,
+      "category": "Electronics",
+      "image": "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=500",
+      "images": [
+        "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=500"
+      ],
+      "description": "Ergonomic wireless mouse with adjustable DPI, silent clicks, and long battery life. Comfortable for all-day use.",
+      "discount": 10,
+      "rating": 4.3,
+      "featured": false
+    }
+  ],
+  "users": [
+    {
+      "id": "1",
+      "name": "John Doe",
+      "email": "john@example.com",
+      "password": "hashed_password_here"
+    }
+  ],
+  "orders": [
+    {
+      "id": "1",
+      "userId": "1",
+      "products": [
+        {
+          "productId": "1",
+          "quantity": 2,
+          "price": 2499
+        }
+      ],
+      "totalAmount": 4998,
+      "status": "completed",
+      "paymentMethod": "SSLCommerz",
+      "transactionId": "SSL123456789",
+      "shippingAddress": {
+        "name": "John Doe",
+        "phone": "01712345678",
+        "address": "123 Main Street",
+        "city": "Dhaka",
+        "country": "Bangladesh"
+      },
+      "createdAt": "2024-12-20T10:30:00Z"
+    }
+  ]
+}
