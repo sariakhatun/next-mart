@@ -1,13 +1,17 @@
 'use client';
 
-import { useCart } from '@/src/hooks/useCart';
+import { useCartContext } from '@/src/context/CartContext';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 export default function CartPage() {
-  const { cart, removeFromCart, updateQuantity, getTotalPrice } = useCart();
+    const { cart, loading, removeFromCart, updateQuantity, getTotalPrice } = useCartContext();
 
-  if (!cart.length)
-    return <p className="text-center mt-20 text-gray-500 text-lg">Your cart is empty.</p>;
+
+if (loading) return <p className="flex items-center justify-center min-h-screen mt-20 text-gray-500 text-lg">Loading cart...</p>;
+if (!cart.length) return <p className="text-center mt-20 text-gray-500 text-lg">Your cart is empty.</p>;
+
+ 
 
   return (
     <div className="max-w-5xl mx-auto mt-10 px-4">

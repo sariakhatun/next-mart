@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { ShoppingCart, Star, Eye } from 'lucide-react';
 import { Product } from '../types/product';
 import { useCart } from '../hooks/useCart';
+import Swal from 'sweetalert2';
 
 interface ProductCardProps {
   product: Product;
@@ -34,7 +35,15 @@ export default function ProductCard({ product }: ProductCardProps) {
   const handleAddToCart = () => {
   if (product.stock > 0) {
     addToCart(product);
-    alert(' Product added');
+    // Show SweetAlert success message
+          Swal.fire({
+            icon: 'success',
+            title: 'Added to Cart',
+            text: ` item added successfully`,
+            timer: 1200,
+            showConfirmButton: false,
+          });
+    
   } else {
     alert('❌ Product out of stock!');
   }

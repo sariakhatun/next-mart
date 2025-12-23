@@ -7,6 +7,7 @@ import { Product } from '../types/product';
 
 interface CartContextProps {
   cart: CartItem[];
+  loading: boolean; // <-- new
   addToCart: (product: Product, quantity?: number) => Promise<void>;
   removeFromCart: (productId: number) => Promise<void>;
   updateQuantity: (productId: number, newQuantity: number, stock: number) => Promise<void>;
@@ -17,20 +18,30 @@ const CartContext = createContext<CartContextProps | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [loading, setLoading] = useState(true); // 🔥 loading state
   const { data: session } = useSession();
   const userEmail = session?.user?.email;
 
   const fetchCart = async () => {
     if (!userEmail) {
       setCart([]);
+      setLoading(false);
       return;
     }
-    const res = await fetch(`/api/cart?userEmail=${userEmail}`);
-    const data = await res.json();
-    setCart(Array.isArray(data) ? data : []); // 🔒 safety
+    try {
+      const res = await fetch(`/api/cart?userEmail=${userEmail}`);
+      const data = await res.json();
+      setCart(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error('Failed to fetch cart', err);
+      setCart([]);
+    } finally {
+      setLoading(false); // ✅ set loading false after fetch
+    }
   };
 
   useEffect(() => {
+    setLoading(true); // start loading whenever userEmail changes
     fetchCart();
   }, [userEmail]);
 
@@ -46,7 +57,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
       userEmail,
     };
 
-    // 🔥 Optimistic update (navbar instantly update)
     setCart(prev => {
       const exists = prev.find(item => item.id === product.id);
       if (exists) {
@@ -68,18 +78,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const removeFromCart = async (productId: number) => {
     if (!userEmail) return;
-
     setCart(prev => prev.filter(item => item.id !== productId));
-
-    await fetch(
-      `/api/cart?userEmail=${userEmail}&productId=${productId}`,
-      { method: 'DELETE' }
-    );
+    await fetch(`/api/cart?userEmail=${userEmail}&productId=${productId}`, { method: 'DELETE' });
   };
 
   const updateQuantity = async (productId: number, newQuantity: number, stock: number) => {
     if (!userEmail) return;
-
     const finalQty = Math.min(newQuantity, stock);
 
     setCart(prev =>
@@ -105,7 +109,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   return (
     <CartContext.Provider
-      value={{ cart, addToCart, removeFromCart, updateQuantity, getTotalPrice }}
+      value={{ cart, loading, addToCart, removeFromCart, updateQuantity, getTotalPrice }}
     >
       {children}
     </CartContext.Provider>

@@ -5,10 +5,16 @@ import { ShoppingCart, Star, Plus, Minus, ArrowLeft } from 'lucide-react';
 import { useState } from 'react';
 import { Product } from '@/src/types/product';
 import Link from 'next/link';
+import { useCartContext } from '@/src/context/CartContext';
+import { useRouter } from 'next/navigation';
+import Swal from 'sweetalert2';
 
 export default function ProductDetailClient({ product }: { product: Product }) {
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(product.image);
+
+  const { addToCart } = useCartContext();
+  const router = useRouter();
 
   const discountedPrice = product.discount
     ? Math.round(product.price - (product.price * product.discount) / 100)
@@ -22,9 +28,38 @@ export default function ProductDetailClient({ product }: { product: Product }) {
     }
   };
 
+  const handleAddToCart = async () => {
+    if (product.stock === 0) {
+      Swal.fire('Out of stock', '', 'error');
+      return;
+    }
+
+    try {
+      // Add product to cart context and backend
+      await addToCart({ ...product }, quantity);
+
+      // Show SweetAlert success message
+      Swal.fire({
+        icon: 'success',
+        title: 'Added to Cart',
+        text: `${quantity} item(s) added successfully`,
+        timer: 1200,
+        showConfirmButton: false,
+      });
+
+      // Redirect to cart page after a short delay
+      setTimeout(() => {
+        router.push('/cart');
+      }, 1300);
+    } catch (error) {
+      Swal.fire('Error', 'Failed to add product to cart', 'error');
+      console.error(error);
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
-         {/* Back Button */}
+      {/* Back Button */}
       <div className="mb-6">
         <Link
           href="/products"
@@ -34,8 +69,8 @@ export default function ProductDetailClient({ product }: { product: Product }) {
           Back to Products
         </Link>
       </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-       
         {/* Image Gallery Section */}
         <div className="space-y-4">
           {/* Main Image */}
@@ -57,7 +92,9 @@ export default function ProductDetailClient({ product }: { product: Product }) {
                   key={index}
                   onClick={() => setSelectedImage(img)}
                   className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all shadow-sm hover:shadow-md ${
-                    selectedImage === img ? 'border-cyan-600 ring-2 ring-cyan-600 ring-offset-2' : 'border-gray-200'
+                    selectedImage === img
+                      ? 'border-cyan-600 ring-2 ring-cyan-600 ring-offset-2'
+                      : 'border-gray-200'
                   }`}
                 >
                   <Image
@@ -121,12 +158,18 @@ export default function ProductDetailClient({ product }: { product: Product }) {
             </div>
 
             {/* Stock Status */}
-            <p className={`text-lg font-medium mb-6 ${
-              product.stock > 10 ? 'text-green-600' : product.stock > 0 ? 'text-orange-600' : 'text-red-600'
-            }`}>
-              {product.stock > 0 
-                ? product.stock > 10 
-                  ? 'In Stock' 
+            <p
+              className={`text-lg font-medium mb-6 ${
+                product.stock > 10
+                  ? 'text-green-600'
+                  : product.stock > 0
+                  ? 'text-orange-600'
+                  : 'text-red-600'
+              }`}
+            >
+              {product.stock > 0
+                ? product.stock > 10
+                  ? 'In Stock'
                   : `Only ${product.stock} left!`
                 : 'Out of Stock'}
             </p>
@@ -134,9 +177,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
             {/* Description */}
             <div className="mb-8">
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Description</h3>
-              <p className="text-gray-600 leading-relaxed">
-                {product.description}
-              </p>
+              <p className="text-gray-600 leading-relaxed">{product.description}</p>
             </div>
 
             {/* Quantity + Add to Cart */}
@@ -162,7 +203,10 @@ export default function ProductDetailClient({ product }: { product: Product }) {
                   </button>
                 </div>
 
-                <button className="flex-1 bg-gradient-to-r from-cyan-600 to-cyan-700 text-white py-4 px-8 rounded-lg font-semibold hover:from-cyan-700 hover:to-cyan-800 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3 text-lg">
+                <button
+                  onClick={handleAddToCart}
+                  className="flex-1 bg-gradient-to-r from-cyan-600 to-cyan-700 text-white py-4 px-8 rounded-lg font-semibold hover:from-cyan-700 hover:to-cyan-800 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3 text-lg"
+                >
                   <ShoppingCart className="w-6 h-6" />
                   Add to Cart ({quantity})
                 </button>
