@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 
 export default function CheckoutPage() {
-  const { cart, getTotalPrice } = useCartContext(); // Add setCart if you want to clear cart
+  const { cart, getTotalPrice } = useCartContext(); // clearCart add করো যদি context-এ থাকে
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -18,23 +18,20 @@ export default function CheckoutPage() {
     address: '',
     city: '',
     phone: '',
+    postcode: '', // যদি চাও add করো
   });
 
-  // Auto-fill name and email from session
-  useEffect(() => {
-    if (!session?.user) return;
+  const [isLoading, setIsLoading] = useState(false);
 
-    // ✅ Wrap in a microtask to avoid synchronous setState
-    const fillShippingInfo = () => {
+  // Auto-fill from session
+  useEffect(() => {
+    if (session?.user) {
       setShippingInfo(prev => ({
         ...prev,
         name: session.user?.name || '',
         email: session.user?.email || '',
       }));
-    };
-
-    // Schedule update after current call stack
-    Promise.resolve().then(fillShippingInfo);
+    }
   }, [session]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,54 +46,64 @@ export default function CheckoutPage() {
       return;
     }
 
-    // Send order data to backend to create SSLCommerz payment session
-    const res = await fetch('/api/sslcommerz/init', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        cart,
-        shippingInfo,
-        totalAmount: getTotalPrice(),
-      }),
-    });
+    setIsLoading(true);
 
-    const data = await res.json();
+    try {
+      const res = await fetch('/api/payment/init', {  // ← এখানে path ঠিক করো
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          cartItems: cart,          // তোমার init route-এ cartItems expect করে
+          shippingInfo,
+          totalAmount: getTotalPrice(),
+        }),
+      });
 
-    if (data && data.GatewayPageURL) {
-      // Redirect to SSLCommerz hosted payment page
-      window.location.href = data.GatewayPageURL;
-    } else {
-      Swal.fire('Payment Initialization Failed', '', 'error');
+      const data = await res.json();
+
+      if (res.ok && data.success && data.paymentUrl) {
+        // SSLCommerz hosted page-এ redirect
+        window.location.href = data.paymentUrl;
+      } else {
+        Swal.fire('Payment Initiation Failed', data.message || 'Try again', 'error');
+      }
+    } catch (error) {
+      console.error(error);
+      Swal.fire('Something went wrong!', 'Please try again later.', 'error');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="max-w-3xl mx-auto my-10 px-4">
-      {/* Back to Cart Link */}
       <div className="mb-6">
         <Link
           href="/cart"
           className="text-cyan-600 font-medium hover:underline flex items-center gap-2"
         >
-          &#8592; Back to Cart
+          ← Back to Cart
         </Link>
       </div>
 
       <h1 className="text-3xl font-bold mb-6">Checkout</h1>
 
       {/* Order Summary */}
-      <div className="mb-6 border p-4 rounded-lg">
+      <div className="mb-6 border p-4 rounded-lg bg-gray-50">
         <h2 className="font-semibold mb-3">Order Summary</h2>
-        {cart.map(item => (
-          <div key={item.id} className="flex justify-between mb-2">
-            <span>{item.name} x {item.quantity}</span>
-            <span>৳{item.price * item.quantity}</span>
-          </div>
-        ))}
-        <hr className="my-2" />
-        <div className="flex justify-between font-bold">
+       {cart.map(item => (
+  <div 
+    key={item.id}  // ← এটাই সঠিক! Product interface-এ id: string আছে
+    className="flex justify-between mb-2"
+  >
+    <span>{item.name} × {item.quantity}</span>
+    <span>৳{(item.price * item.quantity).toFixed(2)}</span>
+  </div>
+))}
+        <hr className="my-3" />
+        <div className="flex justify-between font-bold text-lg">
           <span>Total</span>
-          <span>৳{getTotalPrice()}</span>
+          <span>৳{getTotalPrice().toFixed(2)}</span>
         </div>
       </div>
 
@@ -109,7 +116,8 @@ export default function CheckoutPage() {
           value={shippingInfo.name}
           onChange={handleChange}
           required
-          className="w-full border p-2 rounded"
+          className="w-full border p-3 rounded-lg"
+          disabled={isLoading}
         />
         <input
           type="email"
@@ -118,16 +126,18 @@ export default function CheckoutPage() {
           value={shippingInfo.email}
           onChange={handleChange}
           required
-          className="w-full border p-2 rounded"
+          className="w-full border p-3 rounded-lg"
+          disabled={isLoading}
         />
         <input
           type="text"
           name="phone"
-          placeholder="Phone"
+          placeholder="Phone Number"
           value={shippingInfo.phone}
           onChange={handleChange}
           required
-          className="w-full border p-2 rounded"
+          className="w-full border p-3 rounded-lg"
+          disabled={isLoading}
         />
         <input
           type="text"
@@ -136,7 +146,8 @@ export default function CheckoutPage() {
           value={shippingInfo.address}
           onChange={handleChange}
           required
-          className="w-full border p-2 rounded"
+          className="w-full border p-3 rounded-lg"
+          disabled={isLoading}
         />
         <input
           type="text"
@@ -145,14 +156,16 @@ export default function CheckoutPage() {
           value={shippingInfo.city}
           onChange={handleChange}
           required
-          className="w-full border p-2 rounded"
+          className="w-full border p-3 rounded-lg"
+          disabled={isLoading}
         />
 
         <button
           type="submit"
-          className="w-full bg-cyan-600 text-white py-3 rounded-lg font-semibold hover:bg-cyan-700 transition"
+          disabled={isLoading}
+          className="w-full bg-cyan-600 text-white py-4 rounded-lg font-semibold hover:bg-cyan-700 transition disabled:opacity-50"
         >
-          Proceed to Payment
+          {isLoading ? 'Processing...' : 'Proceed to Payment'}
         </button>
       </form>
     </div>
