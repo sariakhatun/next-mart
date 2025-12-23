@@ -4,18 +4,20 @@ import { useState } from 'react';
 import { ShoppingCart, User, Menu, X, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useSession, signOut } from 'next-auth/react';
+import Swal from 'sweetalert2';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
+  const { data: session } = useSession();
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Left: Logo & Products */}
+          {/* Left: Logo */}
           <div className="flex items-center space-x-8">
-            {/* Logo */}
             <Link href="/" className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-cyan-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-xl">N</span>
@@ -24,25 +26,21 @@ export default function Navbar() {
                 NextMart
               </span>
             </Link>
-
-           
           </div>
-          {/* Navlink */}
-          <div className='flex items-center gap-4'>
-             {/* Products Link - Desktop */}
+
+          {/* Nav links - Desktop */}
+          <div className="hidden md:flex items-center gap-6">
             <Link
               href="/"
-              className={`hidden md:block font-medium transition-colors ${
-                pathname === '/'
-                  ? 'text-cyan-600 font-bold'
-                  : 'text-gray-700 hover:text-cyan-600'
+              className={`font-medium transition-colors ${
+                pathname === '/' ? 'text-cyan-600 font-bold' : 'text-gray-700 hover:text-cyan-600'
               }`}
             >
               Home
             </Link>
             <Link
               href="/products"
-              className={`hidden md:block font-medium transition-colors ${
+              className={`font-medium transition-colors ${
                 pathname === '/products'
                   ? 'text-cyan-600 font-bold'
                   : 'text-gray-700 hover:text-cyan-600'
@@ -50,62 +48,63 @@ export default function Navbar() {
             >
               Products
             </Link>
+
+            {session ? (
+              <>
+                {/* Cart */}
+                <Link
+                  href="/cart"
+                  className="relative text-gray-700 hover:text-cyan-600"
+                >
+                  <ShoppingCart className="w-6 h-6" />
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                    3
+                  </span>
+                </Link>
+
+                {/* Profile */}
+                <Link
+                  href="/profile"
+                  className={`flex items-center space-x-2 font-medium transition-colors ${
+                    pathname === '/profile' ? 'text-cyan-600 font-bold' : 'text-gray-700 hover:text-cyan-600'
+                  }`}
+                >
+                  <User className="w-6 h-6" />
+                  <span>Profile</span>
+                </Link>
+
+                {/* Logout */}
+                <button
+  onClick={async () => {
+    await signOut({ redirect: false }); 
+    Swal.fire({
+      icon: 'info',
+      title: 'Logged Out',
+      text: 'You have been successfully logged out.',
+      confirmButtonColor: '#06b6d4',
+    }).then(() => {
+      // optional redirect after alert
+      window.location.href = '/'; 
+    });
+  }}
+  className="flex items-center space-x-2 text-red-600 font-medium py-2 px-4 rounded-lg hover:bg-red-50 transition-colors text-left"
+>
+  <LogOut className="w-5 h-5" />
+  <span>Logout</span>
+</button>
+              </>
+            ) : (
+              <Link
+                href="/login"
+                className="bg-cyan-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-cyan-700 transition-colors"
+              >
+                Login
+              </Link>
+            )}
           </div>
 
-          {/* Right: Cart & Auth - Desktop */}
-          <div className="hidden md:flex items-center space-x-6">
-            {/* Cart */}
-            {/* <Link
-              href="/cart"
-              className={`relative transition-colors ${
-                pathname === '/cart' ? 'text-cyan-600' : 'text-gray-700 hover:text-cyan-600'
-              }`}
-            >
-              <ShoppingCart className="w-6 h-6" />
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                3
-              </span>
-            </Link> */}
-
-            {/* Profile */}
-            {/* <Link
-              href="/profile"
-              className={`flex items-center space-x-2 font-medium transition-colors ${
-                pathname === '/profile'
-                  ? 'text-cyan-600 font-bold'
-                  : 'text-gray-700 hover:text-cyan-600'
-              }`}
-            >
-              <User className="w-6 h-6" />
-              <span>Profile</span>
-            </Link> */}
-
-            {/* Logout Button */}
-            {/* <button className="flex items-center space-x-2 text-gray-700 hover:text-red-600 transition-colors">
-              <LogOut className="w-5 h-5" />
-              <span className="font-medium">Logout</span>
-            </button> */}
-
-            {/* OR Login Button - Comment out one */}
-            <Link
-              href="/login"
-              className="bg-cyan-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-cyan-700 transition-colors"
-            >
-              Login
-            </Link>
-          </div>
-
-          {/* Mobile Menu Button & Cart */}
+          {/* Mobile Hamburger */}
           <div className="md:hidden flex items-center space-x-4">
-            {/* Cart - Mobile */}
-            {/* <Link href="/cart" className="relative text-gray-700">
-              <ShoppingCart className="w-6 h-6" />
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                3
-              </span>
-            </Link> */}
-
-            {/* Hamburger */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="text-gray-700 hover:text-cyan-600"
@@ -122,9 +121,7 @@ export default function Navbar() {
               <Link
                 href="/"
                 className={`font-medium py-2 px-4 rounded-lg transition-colors ${
-                  pathname === '/'
-                    ? 'text-cyan-600 font-bold bg-cyan-50'
-                    : 'text-gray-700 hover:text-cyan-600 hover:bg-gray-50'
+                  pathname === '/' ? 'text-cyan-600 font-bold bg-cyan-50' : 'text-gray-700 hover:text-cyan-600 hover:bg-gray-50'
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
@@ -142,32 +139,43 @@ export default function Navbar() {
                 Products
               </Link>
 
-              {/* <Link
-                href="/profile"
-                className={`flex items-center space-x-2 font-medium py-2 px-4 rounded-lg transition-colors ${
-                  pathname === '/profile'
-                    ? 'text-cyan-600 font-bold bg-cyan-50'
-                    : 'text-gray-700 hover:text-cyan-600 hover:bg-gray-50'
-                }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <User className="w-5 h-5" />
-                <span>Profile</span>
-              </Link> */}
-
-              {/* <button className="flex items-center space-x-2 text-red-600 hover:text-red-700 font-medium py-2 px-4 rounded-lg hover:bg-red-50 transition-colors text-left">
-                <LogOut className="w-5 h-5" />
-                <span>Logout</span>
-              </button> */}
-
-              {/* OR Login Button - Comment out one */}
-              <Link
-                href="/login"
-                className="bg-cyan-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-cyan-700 transition-colors text-center"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Login
-              </Link>
+              {session ? (
+                <>
+                  <Link
+                    href="/cart"
+                    className="relative font-medium py-2 px-4 rounded-lg text-gray-700 hover:text-cyan-600 hover:bg-gray-50"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Cart
+                  </Link>
+                  <Link
+                    href="/profile"
+                    className="flex items-center space-x-2 font-medium py-2 px-4 rounded-lg text-gray-700 hover:text-cyan-600 hover:bg-gray-50"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <User className="w-5 h-5" />
+                    <span>Profile</span>
+                  </Link>
+                  <button
+                    onClick={() => {
+                      signOut({ callbackUrl: '/' });
+                      setIsMenuOpen(false);
+                    }}
+                    className="flex items-center space-x-2 text-red-600 font-medium py-2 px-4 rounded-lg hover:bg-red-50 transition-colors text-left"
+                  >
+                    <LogOut className="w-5 h-5" />
+                    <span>Logout</span>
+                  </button>
+                </>
+              ) : (
+                <Link
+                  href="/login"
+                  className="bg-cyan-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-cyan-700 transition-colors text-center"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Login
+                </Link>
+              )}
             </div>
           </div>
         )}
