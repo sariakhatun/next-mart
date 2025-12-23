@@ -23,20 +23,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // SSLCommerz থেকে payment validate করি
     const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
     const validation = await sslcz.validate({ val_id });
 
-    // validation.response একটা object আসবে (status: 'VALID' / 'VALIDATED' / অন্য কিছু)
     const isValid =
       validation &&
       (validation.status === 'VALID' || validation.status === 'VALIDATED');
 
     if (isValid && status === 'VALID') {
-      // এখানে order MongoDB-এ সেভ করি
-      const ordersCollection = await dbConnect('orders'); // 'orders' collection নাম, চাইলে change করো
+      const ordersCollection = await dbConnect('orders'); 
 
-      // init route-এ value_a/b/c দিয়ে data store করেছিলে, তাই এখানে retrieve করতে পারি
       const userEmail = data.value_a as string;
       const cartItems = JSON.parse((data.value_b as string) || '[]');
       const shippingInfo = JSON.parse((data.value_c as string) || '{}');
@@ -52,12 +48,11 @@ export async function POST(req: NextRequest) {
         cartItems,
         shippingInfo,
         createdAt: new Date(),
-        sslResponse: validation, // full response save করতে চাইলে
+        sslResponse: validation, 
       };
 
       await ordersCollection.insertOne(orderData);
 
-      // Optional: এখানে stock update, cart clear ইত্যাদি করতে পারো
 
       // Success page-এ redirect
       return NextResponse.redirect(

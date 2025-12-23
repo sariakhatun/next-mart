@@ -1,9 +1,5 @@
 // app/api/payment/init/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import fetch from 'cross-fetch';
-globalThis.fetch = fetch;
-
-
 
 import { getServerSession } from 'next-auth';
 import SSLCommerzPayment from 'sslcommerz-lts';

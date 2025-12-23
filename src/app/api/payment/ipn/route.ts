@@ -50,7 +50,6 @@ export async function POST(req: NextRequest) {
         notifiedVia: 'IPN',
       };
 
-      // Duplicate prevent করতে upsert ব্যবহার করো (tran_id unique)
       await ordersCollection.updateOne(
         { transactionId: tran_id },
         { $setOnInsert: orderData },

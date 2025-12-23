@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 
 export default function CheckoutPage() {
-  const { cart, getTotalPrice } = useCartContext(); // clearCart add করো যদি context-এ থাকে
+  const { cart, getTotalPrice } = useCartContext(); 
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -18,7 +18,7 @@ export default function CheckoutPage() {
     address: '',
     city: '',
     phone: '',
-    postcode: '', // যদি চাও add করো
+    postcode: '', 
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -49,11 +49,11 @@ export default function CheckoutPage() {
     setIsLoading(true);
 
     try {
-      const res = await fetch('/api/payment/init', {  // ← এখানে path ঠিক করো
+      const res = await fetch('/api/payment/init', {  
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          cartItems: cart,          // তোমার init route-এ cartItems expect করে
+          cartItems: cart,          
           shippingInfo,
           totalAmount: getTotalPrice(),
         }),
@@ -93,7 +93,7 @@ export default function CheckoutPage() {
         <h2 className="font-semibold mb-3">Order Summary</h2>
        {cart.map(item => (
   <div 
-    key={item.id}  // ← এটাই সঠিক! Product interface-এ id: string আছে
+    key={item.id}  
     className="flex justify-between mb-2"
   >
     <span>{item.name} × {item.quantity}</span>
