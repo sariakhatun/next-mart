@@ -2,30 +2,43 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ShoppingCart, Star, Eye } from 'lucide-react';
 import { Product } from '../types/product';
+import { useCart } from '../hooks/useCart';
 
 interface ProductCardProps {
   product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const { addToCart } = useCart();
+  const router = useRouter();
+
   const discountedPrice = product.discount
     ? Math.round(product.price - (product.price * product.discount) / 100)
     : null;
 
-  const getStockStatus = (stock: number): string => {
+  const getStockStatus = (stock: number) => {
     if (stock === 0) return 'Out of Stock';
     if (stock <= 5) return `Only ${stock} left!`;
     return 'In Stock';
   };
 
-  const getStockColor = (stock: number): string => {
+  const getStockColor = (stock: number) => {
     if (stock === 0) return 'text-red-600';
     if (stock <= 5) return 'text-orange-600';
     return 'text-green-600';
   };
 
+  const handleAddToCart = () => {
+  if (product.stock > 0) {
+    addToCart(product);
+    alert(' Product added');
+  } else {
+    alert('❌ Product out of stock!');
+  }
+};
 
   return (
     <div className="group bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
@@ -39,13 +52,11 @@ export default function ProductCard({ product }: ProductCardProps) {
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
             className="object-cover group-hover:scale-110 transition-transform duration-500"
           />
-
           {product.featured && (
             <span className="absolute top-2 left-2 bg-cyan-600 text-white text-xs font-bold px-2 py-1 rounded-full">
               Featured
             </span>
           )}
-
           {product.discount && (
             <span className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">
               -{product.discount}%
@@ -55,7 +66,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       </Link>
 
       {/* Content Section */}
-      <div className="p-4"> 
+      <div className="p-4">
         <p className="text-xs text-cyan-600 font-semibold uppercase tracking-wide mb-1">
           {product.category}
         </p>
@@ -66,7 +77,6 @@ export default function ProductCard({ product }: ProductCardProps) {
           </h3>
         </Link>
 
-        {/* Rating */}
         {product.rating && (
           <div className="flex items-center gap-1 mb-3">
             {Array.from({ length: 5 }, (_, i) => (
@@ -85,7 +95,6 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
         )}
 
-        {/* Price */}
         <div className="mb-3">
           {discountedPrice ? (
             <div className="flex items-center gap-2">
@@ -103,16 +112,17 @@ export default function ProductCard({ product }: ProductCardProps) {
           )}
         </div>
 
-        {/* Stock Status */}
         <p className={`text-xs font-medium mb-4 ${getStockColor(product.stock)}`}>
           {getStockStatus(product.stock)}
         </p>
 
-        {/* Buttons: Add to Cart + View Details */}
         <div className="grid grid-cols-2 gap-3">
-          <button className="bg-gradient-to-r from-cyan-600 to-cyan-700 text-white py-2.5 px-3 rounded-lg font-medium text-sm hover:from-cyan-700 hover:to-cyan-800 transition-all flex items-center justify-center gap-1.5 shadow-md hover:shadow-lg">
+          <button
+            onClick={handleAddToCart}
+            className="bg-gradient-to-r from-cyan-600 to-cyan-700 text-white py-2.5 px-3 rounded-lg font-medium text-sm hover:from-cyan-700 hover:to-cyan-800 transition-all flex items-center justify-center gap-1.5 shadow-md hover:shadow-lg"
+          >
             <ShoppingCart className="w-4 h-4" />
-            Add
+            Add To Cart
           </button>
 
           <Link
@@ -120,7 +130,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             className="border border-cyan-600 text-cyan-600 py-2.5 px-3 rounded-lg font-medium text-sm hover:bg-cyan-50 transition-all flex items-center justify-center gap-1.5"
           >
             <Eye className="w-4 h-4" />
-            View
+            View Details
           </Link>
         </div>
       </div>

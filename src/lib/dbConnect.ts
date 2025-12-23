@@ -28,7 +28,7 @@ export async function dbConnect(collectionName: string) {
   });
 
   try {
-    await client.connect();
+    //await client.connect();
     console.log('✅ MongoDB successfully connected!');
 
     const db = client.db(dbName);

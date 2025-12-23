@@ -6,12 +6,14 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import Swal from 'sweetalert2';
+import { useCartContext } from '../context/CartContext';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   const { data: session } = useSession();
-
+    const { cart } = useCartContext(); // <-- use context
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -58,7 +60,7 @@ export default function Navbar() {
                 >
                   <ShoppingCart className="w-6 h-6" />
                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                    3
+                   {totalItems}
                   </span>
                 </Link>
 
@@ -83,7 +85,6 @@ export default function Navbar() {
       text: 'You have been successfully logged out.',
       confirmButtonColor: '#06b6d4',
     }).then(() => {
-      // optional redirect after alert
       window.location.href = '/'; 
     });
   }}
