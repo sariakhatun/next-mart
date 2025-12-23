@@ -79,31 +79,44 @@ This project demonstrates real-world e-commerce features with a strong focus on 
 
 ## Project Structure
 
-```
 src/
 ├── app/
 │   ├── (routes)
-│   │   ├── /                   → Home
-│   │   ├── products/           → Listing & [id] details
-│   │   ├── cart/               → Cart page (protected)
-│   │   ├── checkout/           → Checkout & payment
-│   │   ├── profile/            → User profile (protected)
-│   │   ├── login/              → Login
+│   │   ├── page.tsx                → Home page
+│   │   ├── products/
+│   │   │   ├── page.tsx            → Product listing
+│   │   │   └── [id]/
+│   │   │       └── page.tsx        → Product details
+│   │   ├── cart/
+│   │   │   └── page.tsx            → Cart page (protected)
+│   │   ├── checkout/
+│   │   │   └── page.tsx            → Checkout & payment
+│   │   ├── profile/
+│   │   │   └── page.tsx            → User profile (protected)
+│   │   ├── login/
+│   │   │   └── page.tsx            → Login page
 │   │   └── api/
-│   │       ├── auth/[...nextauth]/ → NextAuth config
+│   │       ├── auth/
+│   │       │   └── [...nextauth]/
+│   │       │       └── route.ts    → NextAuth configuration
 │   │       └── payment/
-│   │           ├── init/       → Initiate payment
-│   │           ├── success/    → Success callback + save order
-│   │           ├── fail/       → Fail callback
-│   │           ├── cancel/     → Cancel callback
-│   │           └── ipn/        → IPN (background notification)
-│   └── layout.tsx              → Root layout with SessionProvider
-├── components/                     → Reusable UI components
-├── context/                        → CartContext
-├── lib/                            → dbConnect, utilities
+│   │           ├── init/
+│   │           │   └── route.ts    → Initiate SSLCommerz payment
+│   │           ├── success/
+│   │           │   └── route.ts    → Success callback + save order
+│   │           ├── fail/
+│   │           │   └── route.ts    → Fail callback
+│   │           ├── cancel/
+│   │           │   └── route.ts    → Cancel callback
+│   │           └── ipn/
+│   │               └── route.ts    → IPN notification
+│   └── layout.tsx                  → Root layout with SessionProvider
+├── components/                     → Reusable UI components (Navbar, Footer, ProductCard, etc.)
+├── context/                        → CartContext.tsx
+├── lib/                            → Database connection (dbConnect.ts), utilities
 ├── types/                          → TypeScript interfaces (Product, CartItem, etc.)
-└── public/                         → Images, icons
-```
+├── public/                         → Static assets (images, icons, favicon)
+└── next.config.js                  → Next.js configuration
 
 ## Environment Variables
 
