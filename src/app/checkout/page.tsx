@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 
 export default function CheckoutPage() {
-  const { cart, getTotalPrice, setCart } = useCartContext(); // Add setCart if you want to clear cart
+  const { cart, getTotalPrice } = useCartContext(); // Add setCart if you want to clear cart
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -22,13 +22,19 @@ export default function CheckoutPage() {
 
   // Auto-fill name and email from session
   useEffect(() => {
-    if (session?.user) {
+    if (!session?.user) return;
+
+    // ✅ Wrap in a microtask to avoid synchronous setState
+    const fillShippingInfo = () => {
       setShippingInfo(prev => ({
         ...prev,
-        name: session.user.name || '',
-        email: session.user.email || '',
+        name: session.user?.name || '',
+        email: session.user?.email || '',
       }));
-    }
+    };
+
+    // Schedule update after current call stack
+    Promise.resolve().then(fillShippingInfo);
   }, [session]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,7 +49,7 @@ export default function CheckoutPage() {
       return;
     }
 
-    // 1. Send order data to your backend to create an SSLCommerz payment session
+    // Send order data to backend to create SSLCommerz payment session
     const res = await fetch('/api/sslcommerz/init', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

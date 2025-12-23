@@ -7,10 +7,10 @@ import { Product } from '../types/product';
 
 interface CartContextProps {
   cart: CartItem[];
-  loading: boolean; // <-- new
+  loading: boolean;
   addToCart: (product: Product, quantity?: number) => Promise<void>;
-  removeFromCart: (productId: number) => Promise<void>;
-  updateQuantity: (productId: number, newQuantity: number, stock: number) => Promise<void>;
+  removeFromCart: (productId: string) => Promise<void>; // ✅ string now
+  updateQuantity: (productId: string, newQuantity: number, stock: number) => Promise<void>; // ✅ string now
   getTotalPrice: () => number;
 }
 
@@ -18,7 +18,7 @@ const CartContext = createContext<CartContextProps | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [loading, setLoading] = useState(true); // 🔥 loading state
+  const [loading, setLoading] = useState(true);
   const { data: session } = useSession();
   const userEmail = session?.user?.email;
 
@@ -36,12 +36,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
       console.error('Failed to fetch cart', err);
       setCart([]);
     } finally {
-      setLoading(false); // ✅ set loading false after fetch
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    setLoading(true); // start loading whenever userEmail changes
+    setLoading(true);
     fetchCart();
   }, [userEmail]);
 
@@ -76,13 +76,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const removeFromCart = async (productId: number) => {
+  const removeFromCart = async (productId: string) => {
     if (!userEmail) return;
     setCart(prev => prev.filter(item => item.id !== productId));
     await fetch(`/api/cart?userEmail=${userEmail}&productId=${productId}`, { method: 'DELETE' });
   };
 
-  const updateQuantity = async (productId: number, newQuantity: number, stock: number) => {
+  const updateQuantity = async (productId: string, newQuantity: number, stock: number) => {
     if (!userEmail) return;
     const finalQty = Math.min(newQuantity, stock);
 

@@ -7,13 +7,14 @@ import { ShoppingCart, Star, Eye } from 'lucide-react';
 import { Product } from '../types/product';
 import { useCart } from '../hooks/useCart';
 import Swal from 'sweetalert2';
+import { useCartContext } from '../context/CartContext';
 
 interface ProductCardProps {
   product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const { addToCart } = useCart();
+  const { addToCart } = useCartContext(); 
   const router = useRouter();
 
   const discountedPrice = product.discount

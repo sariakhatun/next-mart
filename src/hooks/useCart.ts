@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { CartItem } from '@/types/cart';
-import { Product } from '@/types/product';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { CartItem } from '../types/cart';
+import { Product } from '../types/product';
 
 export function useCart() {
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -16,13 +16,25 @@ export function useCart() {
   // fetch cart from MongoDB
   const fetchCart = async () => {
     if (!userEmail) return;
-    const res = await fetch(`/api/cart?userEmail=${userEmail}`);
-    const data = await res.json();
-    setCart(data);
+    try {
+      const res = await fetch(`/api/cart?userEmail=${userEmail}`);
+      const data = await res.json();
+      setCart(data);
+    } catch (err) {
+      console.error('Failed to fetch cart', err);
+      setCart([]);
+    }
   };
 
+  // ✅ Fix for "Calling setState synchronously within an effect"
   useEffect(() => {
-    fetchCart();
+    if (!userEmail) return;
+
+    const getCart = async () => {
+      await fetchCart();
+    };
+
+    getCart();
   }, [userEmail]);
 
   const addToCart = async (product: Product) => {
@@ -43,36 +55,37 @@ export function useCart() {
     }
   };
 
-  const removeFromCart = async (productId: number) => {
+  const removeFromCart = async (productId: number | string) => {
     if (!userEmail) return;
     await fetch(`/api/cart?userEmail=${userEmail}&productId=${productId}`, { method: 'DELETE' });
     fetchCart();
   };
 
-// updateQuantity already does optimistic updates
-const updateQuantity = async (productId: number, newQuantity: number, stock: number) => {
-  if (!userEmail) return;
+  // updateQuantity already does optimistic updates
+  const updateQuantity = async (productId: number | string, newQuantity: number, stock: number) => {
+    if (!userEmail) return;
 
-  // Optimistic update for UI
-  setCart(prev => prev.map(item => item.id === productId
-    ? { ...item, quantity: Math.min(newQuantity, stock) }
-    : item
-  ));
+    // Optimistic update for UI
+    setCart(prev =>
+      prev.map(item =>
+        String(item.id) === String(productId)
+          ? { ...item, quantity: Math.min(newQuantity, stock) }
+          : item
+      )
+    );
 
-  // Sync with MongoDB
-  try {
-    await fetch('/api/cart', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userEmail, productId, quantity: Math.min(newQuantity, stock) }),
-    });
-  } catch (err) {
-    console.error(err);
-    fetchCart(); // fallback if API fails
-  }
-};
-
-
+    // Sync with MongoDB
+    try {
+      await fetch('/api/cart', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userEmail, productId: String(productId), quantity: Math.min(newQuantity, stock) }),
+      });
+    } catch (err) {
+      console.error(err);
+      fetchCart(); // fallback if API fails
+    }
+  };
 
   const getTotalPrice = () => {
     return cart.reduce((total, item) => {

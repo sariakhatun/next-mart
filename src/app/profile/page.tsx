@@ -1,8 +1,8 @@
 'use client';
 
 import { useSession, signOut } from 'next-auth/react';
-import { useSearchParams, useRouter } from 'next/navigation';  // এই দুটো যোগ করো
-import { useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { useEffect, Suspense } from 'react';
 import Swal from 'sweetalert2';
 import Image from 'next/image';
 
@@ -13,7 +13,7 @@ interface Order {
   date: string;
 }
 
-export default function UserProfile() {
+function UserProfileContent() {
   const { data: session, status } = useSession();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -26,26 +26,28 @@ export default function UserProfile() {
   ];
 
   useEffect(() => {
-    const loginStatus = searchParams.get('login');
+    if (status === 'authenticated' && session) {
+      const loginStatus = searchParams.get('login'); // read once inside useEffect
 
-    // শুধু লগিনের পর প্রথমবার alert দেখাবে
-    if (loginStatus === 'success' && status === 'authenticated' && session) {
-      Swal.fire({
-        icon: 'success',
-        title: '🎉 Login Successful!',
-        text: `Welcome back, ${session.user?.name || 'User'}!`,
-        confirmButtonColor: '#06b6d4',
-        timer: 3000,
-        timerProgressBar: true,
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-      }).then(() => {
-        // Alert বন্ধ হলে URL থেকে ?login=success সরিয়ে দাও
-        router.replace('/profile', { scroll: false });
-      });
+      // শুধু লগিনের পর প্রথমবার alert দেখাবে
+      if (loginStatus === 'success') {
+        Swal.fire({
+          icon: 'success',
+          title: '🎉 Login Successful!',
+          text: `Welcome back, ${session.user?.name || 'User'}!`,
+          confirmButtonColor: '#06b6d4',
+          timer: 3000,
+          timerProgressBar: true,
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+        }).then(() => {
+          // Alert বন্ধ হলে URL থেকে ?login=success সরিয়ে দাও
+          router.replace('/profile', { scroll: false });
+        });
+      }
     }
-  }, [status, session, searchParams, router]);
+  }, [status, session, router, searchParams]); // searchParams added back
 
   if (status === 'loading') {
     return <p className="text-center mt-20 text-xl">Loading your profile...</p>;
@@ -84,7 +86,6 @@ export default function UserProfile() {
                 text: 'You have been successfully logged out.',
                 confirmButtonColor: '#06b6d4',
               }).then(() => {
-                // optional redirect after alert
                 window.location.href = '/'; 
               });
             }}
@@ -125,5 +126,18 @@ export default function UserProfile() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function UserProfile() {
+  return (
+    <Suspense fallback={
+      <div className="text-center mt-20 text-xl">
+        <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-600"></div>
+        <p className="mt-4">Loading profile...</p>
+      </div>
+    }>
+      <UserProfileContent />
+    </Suspense>
   );
 }
