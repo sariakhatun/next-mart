@@ -38,4 +38,7 @@ export const authOptions: AuthOptions = {
       return session; // session object safe
     },
   },
+  pages:{
+    signIn: '/login'
+  }
 };

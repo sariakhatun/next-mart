@@ -1,19 +1,21 @@
 'use client';
 
 import { useState } from 'react';
-import { ShoppingCart, User, Menu, X, LogOut } from 'lucide-react';
+import { ShoppingCart, Menu, X, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import Swal from 'sweetalert2';
 import { useCartContext } from '../context/CartContext';
+import Image from 'next/image';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   const { data: session } = useSession();
-    const { cart } = useCartContext(); // <-- use context
+  const { cart } = useCartContext(); 
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -64,35 +66,47 @@ export default function Navbar() {
                   </span>
                 </Link>
 
-                {/* Profile */}
+                {/* Profile Image */}
                 <Link
                   href="/profile"
                   className={`flex items-center space-x-2 font-medium transition-colors ${
                     pathname === '/profile' ? 'text-cyan-600 font-bold' : 'text-gray-700 hover:text-cyan-600'
                   }`}
                 >
-                  <User className="w-6 h-6" />
+                  {session.user?.image ? (
+                    <Image
+                      src={session.user.image}
+                      alt={session.user.name || 'User'}
+                      width={32}
+                      height={32}
+                      className="rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-gray-700">
+                      {session.user?.name?.[0] || 'U'}
+                    </div>
+                  )}
                   <span>Profile</span>
                 </Link>
 
                 {/* Logout */}
                 <button
-  onClick={async () => {
-    await signOut({ redirect: false }); 
-    Swal.fire({
-      icon: 'info',
-      title: 'Logged Out',
-      text: 'You have been successfully logged out.',
-      confirmButtonColor: '#06b6d4',
-    }).then(() => {
-      window.location.href = '/'; 
-    });
-  }}
-  className="flex items-center space-x-2 text-red-600 font-medium py-2 px-4 rounded-lg hover:bg-red-50 transition-colors text-left"
->
-  <LogOut className="w-5 h-5" />
-  <span>Logout</span>
-</button>
+                  onClick={async () => {
+                    await signOut({ redirect: false }); 
+                    Swal.fire({
+                      icon: 'info',
+                      title: 'Logged Out',
+                      text: 'You have been successfully logged out.',
+                      confirmButtonColor: '#06b6d4',
+                    }).then(() => {
+                      window.location.href = '/'; 
+                    });
+                  }}
+                  className="flex items-center space-x-2 text-red-600 font-medium py-2 px-4 rounded-lg hover:bg-red-50 transition-colors text-left"
+                >
+                  <LogOut className="w-5 h-5" />
+                  <span>Logout</span>
+                </button>
               </>
             ) : (
               <Link
@@ -154,7 +168,19 @@ export default function Navbar() {
                     className="flex items-center space-x-2 font-medium py-2 px-4 rounded-lg text-gray-700 hover:text-cyan-600 hover:bg-gray-50"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <User className="w-5 h-5" />
+                    {session.user?.image ? (
+                      <Image
+                        src={session.user.image}
+                        alt={session.user.name || 'User'}
+                        width={24}
+                        height={24}
+                        className="rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-gray-700 text-xs">
+                        {session.user?.name?.[0] || 'U'}
+                      </div>
+                    )}
                     <span>Profile</span>
                   </Link>
                   <button

@@ -2,20 +2,19 @@
 
 import { useCartContext } from '@/src/context/CartContext';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function CartPage() {
-    const { cart, loading, removeFromCart, updateQuantity, getTotalPrice } = useCartContext();
+  const { cart, removeFromCart, updateQuantity, getTotalPrice } = useCartContext();
+  const router = useRouter();
 
-
-if (loading) return <p className="flex items-center justify-center min-h-screen mt-20 text-gray-500 text-lg">Loading cart...</p>;
-if (!cart.length) return <p className="text-center mt-20 text-gray-500 text-lg">Your cart is empty.</p>;
-
- 
+  if (!cart.length)
+    return <p className="min-h-screen flex items-center justify-center mt-20 text-gray-500 text-lg">Your cart is empty.</p>;
 
   return (
     <div className="max-w-5xl mx-auto mt-10 px-4">
       <h1 className="text-3xl font-bold mb-8 text-center">Your Cart</h1>
+
       <div className="space-y-6">
         {cart.map((item) => {
           const price = item.discount
@@ -45,9 +44,7 @@ if (!cart.length) return <p className="text-center mt-20 text-gray-500 text-lg">
                 {/* Quantity Controls */}
                 <div className="flex items-center gap-2 mt-3">
                   <button
-                    onClick={() =>
-                      updateQuantity(item.id, item.quantity - 1, item.stock)
-                    }
+                    onClick={() => updateQuantity(item.id, item.quantity - 1, item.stock)}
                     disabled={item.quantity <= 1}
                     className={`px-3 py-1 rounded-lg border ${
                       item.quantity <= 1
@@ -63,9 +60,7 @@ if (!cart.length) return <p className="text-center mt-20 text-gray-500 text-lg">
                   </span>
 
                   <button
-                    onClick={() =>
-                      updateQuantity(item.id, item.quantity + 1, item.stock)
-                    }
+                    onClick={() => updateQuantity(item.id, item.quantity + 1, item.stock)}
                     disabled={item.quantity >= item.stock}
                     className={`px-3 py-1 rounded-lg border ${
                       item.quantity >= item.stock
@@ -93,10 +88,20 @@ if (!cart.length) return <p className="text-center mt-20 text-gray-500 text-lg">
       </div>
 
       {/* Total Price */}
-      <div className="mt-8 text-right">
+      <div className="mt-8 text-right flex justify-between items-center">
         <h2 className="text-2xl font-bold">
           Total: ৳{getTotalPrice().toLocaleString()}
         </h2>
+
+        {/* Checkout Button */}
+        {cart.length > 0 && (
+          <button
+            onClick={() => router.push('/checkout')}
+            className="bg-cyan-600 mb-4 text-white py-3 px-6 rounded-lg font-semibold hover:bg-cyan-700 transition"
+          >
+            Proceed to Checkout
+          </button>
+        )}
       </div>
     </div>
   );
