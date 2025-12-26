@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ShoppingCart, Menu, X, LogOut } from 'lucide-react';
+import { ShoppingCart, Menu, X, LogOut, User } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
@@ -13,182 +13,181 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   const { data: session } = useSession();
-  const { cart } = useCartContext(); 
+  const { cart } = useCartContext();
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
+  const navLinks = [
+    { href: '/', label: 'Home' },
+    { href: '/products', label: 'Products' },
+  ];
+
+  const handleLogout = async () => {
+    await signOut({ redirect: false });
+    Swal.fire({
+      icon: 'success',
+      title: 'Logged Out',
+      text: 'You have been successfully logged out.',
+      confirmButtonColor: '#06b6d4',
+      timer: 1500,
+    });
+    window.location.href = '/';
+  };
+
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="bg-white shadow-md sticky top-0 z-50 ">
+      <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
-          {/* Left: Logo */}
-          <div className="flex items-center space-x-8">
-            <Link href="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-cyan-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">N</span>
-              </div>
-              <span className="text-xl font-bold text-gray-900 ">
-                NextMart
-              </span>
-            </Link>
-          </div>
+          {/* Logo */}
+          <Link href="/" className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-cyan-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-2xl">N</span>
+            </div>
+            <span className="text-2xl font-bold text-gray-900">NextMart</span>
+          </Link>
 
-          {/* Nav links - Desktop */}
-          <div className="hidden md:flex items-center gap-6">
-            <Link
-              href="/"
-              className={`font-medium transition-colors ${
-                pathname === '/' ? 'text-cyan-600 font-bold' : 'text-gray-700 hover:text-cyan-600'
-              }`}
-            >
-              Home
-            </Link>
-            <Link
-              href="/products"
-              className={`font-medium transition-colors ${
-                pathname === '/products'
-                  ? 'text-cyan-600 font-bold'
-                  : 'text-gray-700 hover:text-cyan-600'
-              }`}
-            >
-              Products
-            </Link>
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-8">
+            {/* Main Nav Links */}
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`font-medium transition-colors ${
+                  pathname === link.href
+                    ? 'text-cyan-600 font-bold'
+                    : 'text-gray-700 hover:text-cyan-600'
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
 
-            {session ? (
-              <>
+          
+            {session && (
+              <div className="flex items-center space-x-6">
                 {/* Cart */}
-                <Link
-                  href="/cart"
-                  className="relative text-gray-700 hover:text-cyan-600"
-                >
-                  <ShoppingCart className="w-6 h-6" />
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                   {totalItems}
-                  </span>
+                <Link href="/cart" className="relative">
+                  <ShoppingCart className="w-6 h-6 text-gray-700 hover:text-cyan-600 transition" />
+                  {totalItems > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                      {totalItems}
+                    </span>
+                  )}
                 </Link>
 
-                {/* Profile Image */}
-                <Link
-                  href="/profile"
-                  className={`flex items-center space-x-2 font-medium transition-colors ${
-                    pathname === '/profile' ? 'text-cyan-600 font-bold' : 'text-gray-700 hover:text-cyan-600'
-                  }`}
-                >
+                {/* Profile */}
+                <Link href="/profile" className="flex items-center space-x-2 group">
                   {session.user?.image ? (
                     <Image
                       src={session.user.image}
                       alt={session.user.name || 'User'}
-                      width={32}
-                      height={32}
-                      className="rounded-full object-cover"
+                      width={36}
+                      height={36}
+                      className="rounded-full object-cover ring-2 ring-transparent group-hover:ring-cyan-600 transition"
                     />
                   ) : (
-                    <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-gray-700">
-                      {session.user?.name?.[0] || 'U'}
+                    <div className="w-9 h-9 bg-gray-300 rounded-full flex items-center justify-center text-gray-700 font-medium">
+                      {session.user?.name?.[0]?.toUpperCase() || <User className="w-5 h-5" />}
                     </div>
                   )}
-                  <span>Profile</span>
+                  <span className={`font-medium ${pathname === '/profile' ? 'text-cyan-600' : 'text-gray-700'} group-hover:text-cyan-600 transition`}>
+                    {session.user?.name?.split(' ')[0] || 'Profile'}
+                  </span>
                 </Link>
 
                 {/* Logout */}
                 <button
-                  onClick={async () => {
-                    await signOut({ redirect: false }); 
-                    Swal.fire({
-                      icon: 'info',
-                      title: 'Logged Out',
-                      text: 'You have been successfully logged out.',
-                      confirmButtonColor: '#06b6d4',
-                    }).then(() => {
-                      window.location.href = '/'; 
-                    });
-                  }}
-                  className="flex items-center space-x-2 text-red-600 font-medium py-2 px-4 rounded-lg hover:bg-red-50 transition-colors text-left"
+                  onClick={handleLogout}
+                  className="flex items-center space-x-2 text-red-600 hover:text-red-700 font-medium bg-red-50 hover:bg-red-100 px-4 py-2 rounded-lg transition"
                 >
                   <LogOut className="w-5 h-5" />
                   <span>Logout</span>
                 </button>
-              </>
-            ) : (
+              </div>
+            )}
+
+          
+            {!session && (
               <Link
                 href="/login"
-                className="bg-cyan-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-cyan-700 transition-colors"
+                className="bg-cyan-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-cyan-700 transition shadow-sm"
               >
                 Login
               </Link>
             )}
           </div>
 
-          {/* Mobile Hamburger */}
-          <div className="md:hidden flex items-center space-x-4">
+        
+          <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-700 hover:text-cyan-600"
+              className="text-gray-700 p-2"
             >
-              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isMenuOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
             </button>
           </div>
         </div>
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden pb-4 border-t border-gray-200 mt-2">
-            <div className="flex flex-col space-y-3 pt-4">
-              <Link
-                href="/"
-                className={`font-medium py-2 px-4 rounded-lg transition-colors ${
-                  pathname === '/' ? 'text-cyan-600 font-bold bg-cyan-50' : 'text-gray-700 hover:text-cyan-600 hover:bg-gray-50'
-                }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Home
-              </Link>
-              <Link
-                href="/products"
-                className={`font-medium py-2 px-4 rounded-lg transition-colors ${
-                  pathname === '/products'
-                    ? 'text-cyan-600 font-bold bg-cyan-50'
-                    : 'text-gray-700 hover:text-cyan-600 hover:bg-gray-50'
-                }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Products
-              </Link>
+          <div className="md:hidden py-4 border-t border-gray-200">
+            <div className="flex flex-col space-y-3">
+              {/* Main Links */}
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`py-3 px-4 rounded-lg font-medium transition ${
+                    pathname === link.href
+                      ? 'text-cyan-600 bg-cyan-50'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
 
+          
               {session ? (
                 <>
                   <Link
                     href="/cart"
-                    className="relative font-medium py-2 px-4 rounded-lg text-gray-700 hover:text-cyan-600 hover:bg-gray-50"
                     onClick={() => setIsMenuOpen(false)}
+                    className="relative py-3 px-4 rounded-lg font-medium text-gray-700 hover:bg-gray-100 flex items-center space-x-3"
                   >
-                    Cart
+                    
+                    <span>Cart</span>
+                   
                   </Link>
+
                   <Link
                     href="/profile"
-                    className="flex items-center space-x-2 font-medium py-2 px-4 rounded-lg text-gray-700 hover:text-cyan-600 hover:bg-gray-50"
                     onClick={() => setIsMenuOpen(false)}
+                    className="flex items-center space-x-3 py-3 px-4 rounded-lg text-gray-700 hover:bg-gray-100"
                   >
                     {session.user?.image ? (
                       <Image
                         src={session.user.image}
-                        alt={session.user.name || 'User'}
-                        width={24}
-                        height={24}
-                        className="rounded-full object-cover"
+                        alt="Profile"
+                        width={32}
+                        height={32}
+                        className="rounded-full"
                       />
                     ) : (
-                      <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-gray-700 text-xs">
-                        {session.user?.name?.[0] || 'U'}
+                      <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                        {session.user?.name?.[0] || <User className="w-5 h-5" />}
                       </div>
                     )}
-                    <span>Profile</span>
+                    <span className="font-medium">Profile</span>
                   </Link>
+
                   <button
                     onClick={() => {
-                      signOut({ callbackUrl: '/' });
+                      handleLogout();
                       setIsMenuOpen(false);
                     }}
-                    className="flex items-center space-x-2 text-red-600 font-medium py-2 px-4 rounded-lg hover:bg-red-50 transition-colors text-left"
+                    className="flex items-center space-x-3 py-3 px-4 rounded-lg text-red-600 hover:bg-red-50 font-medium text-left"
                   >
                     <LogOut className="w-5 h-5" />
                     <span>Logout</span>
@@ -197,8 +196,8 @@ export default function Navbar() {
               ) : (
                 <Link
                   href="/login"
-                  className="bg-cyan-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-cyan-700 transition-colors text-center"
                   onClick={() => setIsMenuOpen(false)}
+                  className="py-3 px-4 bg-cyan-600 text-white text-center rounded-lg font-medium hover:bg-cyan-700"
                 >
                   Login
                 </Link>

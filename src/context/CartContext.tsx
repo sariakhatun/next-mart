@@ -9,8 +9,9 @@ interface CartContextProps {
   cart: CartItem[];
   loading: boolean;
   addToCart: (product: Product, quantity?: number) => Promise<void>;
-  removeFromCart: (productId: string) => Promise<void>; // ✅ string now
-  updateQuantity: (productId: string, newQuantity: number, stock: number) => Promise<void>; // ✅ string now
+  removeFromCart: (productId: string) => Promise<void>;
+  updateQuantity: (productId: string, newQuantity: number, stock: number) => Promise<void>;
+  clearCart: () => Promise<void>; // ✅ Added
   getTotalPrice: () => number;
 }
 
@@ -99,6 +100,24 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  // ✅ Clear Cart Function
+  const clearCart = async () => {
+    if (!userEmail) return;
+    
+    setCart([]); // Clear local state
+    
+    try {
+      // Clear cart in database
+      await fetch(`/api/cart/clear`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userEmail }),
+      });
+    } catch (error) {
+      console.error('Failed to clear cart:', error);
+    }
+  };
+
   const getTotalPrice = () =>
     cart.reduce((total, item) => {
       const price = item.discount
@@ -109,7 +128,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   return (
     <CartContext.Provider
-      value={{ cart, loading, addToCart, removeFromCart, updateQuantity, getTotalPrice }}
+      value={{ 
+        cart, 
+        loading, 
+        addToCart, 
+        removeFromCart, 
+        updateQuantity, 
+        clearCart, // ✅ Added
+        getTotalPrice 
+      }}
     >
       {children}
     </CartContext.Provider>

@@ -1,11 +1,8 @@
 // app/api/payment/fail/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import SSLCommerzPayment from 'sslcommerz-lts';
 import { dbConnect } from '@/src/lib/dbConnect';
 
-const store_id = process.env.SSLCOMMERZ_STORE_ID!;
-const store_passwd = process.env.SSLCOMMERZ_STORE_PASSWORD!;
-const is_live = process.env.SSLCOMMERZ_IS_LIVE === 'true';
+export const runtime = 'nodejs';
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,17 +10,42 @@ export async function POST(req: NextRequest) {
     const data = Object.fromEntries(body);
 
     const tran_id = data.tran_id as string;
-    const amount = data.amount as string;
+    const error = data.error as string;
 
-    // Optional: Log failed payment
-    console.log('Payment FAILED:', { tran_id, reason: data.tran_date });
+    console.log('Payment FAILED:', { tran_id, error });
 
-    // Redirect to fail page
+    // ✅ ORDER STATUS UPDATE করুন (FAILED)
+    if (tran_id) {
+      const ordersCollection = await dbConnect('orders');
+      await ordersCollection.updateOne(
+        { transactionId: tran_id },
+        {
+          $set: {
+            status: 'failed',
+            failedReason: error || 'Payment failed',
+            updatedAt: new Date(),
+          }
+        }
+      );
+    }
+
     return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/payment/fail?tran_id=${tran_id}&amount=${amount}&status=failed`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/payment/fail?tran_id=${tran_id || ''}&reason=${error || 'unknown'}`
     );
   } catch (error) {
     console.error('Payment fail callback error:', error);
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/payment/fail`);
+    return NextResponse.redirect(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/payment/fail?reason=server_error`
+    );
   }
+}
+
+export async function GET(req: NextRequest) {
+  const searchParams = req.nextUrl.searchParams;
+  const reason = searchParams.get('error') || 'unknown';
+  const tran_id = searchParams.get('tran_id') || '';
+  
+  return NextResponse.redirect(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/payment/fail?tran_id=${tran_id}&reason=${reason}`
+  );
 }

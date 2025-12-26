@@ -60,7 +60,7 @@ export default function CheckoutPage() {
       });
 
       const data = await res.json();
-
+      console.log(data)
       if (res.ok && data.success && data.paymentUrl) {
         // SSLCommerz hosted page-এ redirect
         window.location.href = data.paymentUrl;

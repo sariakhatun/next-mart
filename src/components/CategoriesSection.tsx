@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Laptop, ShoppingBag, Dumbbell, Home, Watch, Glasses } from 'lucide-react';
+import SectionTitle from './SectionTitle';
 
 const categories = [
   {
@@ -54,14 +55,15 @@ const categories = [
 
 export default function CategoriesSection() {
   return (
-    <section className="py-16 ">
+    <section className="py-16 mx-auto  max-w-7xl px-4">
       <div className="max-w-7xl mx-auto">
-        {/* Section Header */}
+        
         <div className="text-center mb-12">
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            Shop by Category
-          </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          {/* Section Title */}
+        <div className="text-center">
+          <SectionTitle title=" Shop by Category" />
+        </div>
+          <p className="text-gray-600 max-w-2xl mx-auto ">
             Browse through our diverse range of categories and find exactly what you need
           </p>
         </div>

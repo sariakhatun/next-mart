@@ -38,7 +38,7 @@ export default function RootLayout({
           <CartProvider>
             <Navbar></Navbar>
           <div className="bg-gradient-to-r from-gray-50 to-cyan-50">
-    <main className="flex-1 mx-auto  max-w-7xl px-4 ">{children}</main>
+    <main className="flex-1 ">{children}</main>
         </div>
           </CartProvider>
         </Providers>
