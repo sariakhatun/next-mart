@@ -1,12 +1,13 @@
-// app/payment/success/page.tsx
 'use client';
 
+import { Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 import { useCartContext } from '@/src/context/CartContext';
 
-export default function PaymentSuccessPage() {
+// Separate Client Component that uses useSearchParams and useEffect
+function SuccessContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { clearCart } = useCartContext();
@@ -14,16 +15,15 @@ export default function PaymentSuccessPage() {
   const tran_id = searchParams.get('tran_id');
   const amount = searchParams.get('amount');
 
-  // ✅ Use ref to track if cart has been cleared
+  // Use ref to track if cart has been cleared (prevent multiple clears)
   const hasCleared = useRef(false);
 
   useEffect(() => {
-    // Only clear once
     if (tran_id && !hasCleared.current) {
       hasCleared.current = true;
       clearCart();
     }
-  }, [tran_id]); // ✅ Remove clearCart from dependencies
+  }, [tran_id, clearCart]); // clearCart is stable from context, safe to include
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-cyan-50 px-4">
@@ -46,11 +46,11 @@ export default function PaymentSuccessPage() {
         </div>
         
         <h1 className="text-3xl font-bold text-gray-900 mb-3">
-          পেমেন্ট সফল হয়েছে!
+          Payment Successful!
         </h1>
         
         <p className="text-gray-600 mb-6">
-          আপনার অর্ডার সফলভাবে সম্পন্ন হয়েছে। ধন্যবাদ!
+          Your order has been successfully completed. Thank you!
         </p>
         
         {/* Order Details */}
@@ -77,7 +77,7 @@ export default function PaymentSuccessPage() {
         {/* Confirmation Message */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
           <p className="text-sm text-blue-800">
-            📧 একটি confirmation email আপনার ইমেইলে পাঠানো হয়েছে।
+            📧 A confirmation email has been sent to your inbox.
           </p>
         </div>
         
@@ -87,22 +87,37 @@ export default function PaymentSuccessPage() {
             href="/orders"
             className="block w-full bg-cyan-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-cyan-700 transition-colors duration-200 shadow-md hover:shadow-lg"
           >
-            আমার অর্ডার দেখুন
+            View My Orders
           </Link>
           
           <Link
             href="/"
             className="block w-full border-2 border-gray-300 text-gray-700 py-3 px-6 rounded-lg font-semibold hover:bg-gray-50 transition-colors duration-200"
           >
-            হোম পেজে ফিরে যান
+            Back to Homepage
           </Link>
         </div>
 
         {/* Support Info */}
         <p className="text-xs text-gray-500 mt-6">
-          কোনো সমস্যা হলে আমাদের সাথে যোগাযোগ করুন
+          If you have any issues, please contact us.
         </p>
       </div>
     </div>
+  );
+}
+
+export default function PaymentSuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-cyan-50">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Confirming your payment...</p>
+        </div>
+      </div>
+    }>
+      <SuccessContent />
+    </Suspense>
   );
 }

@@ -8,7 +8,6 @@ import Image from 'next/image';
 import { Order } from '@/src/types/order';
 import { CartItem } from '@/src/types/cart';
 
-
 /* ================= CONTENT ================= */
 
 function UserProfileContent() {
@@ -51,7 +50,14 @@ function UserProfileContent() {
         const res = await fetch('/api/orders');
         const data = await res.json();
 
-        setOrders(Array.isArray(data) ? data : data.orders || []);
+        const allOrders = Array.isArray(data) ? data : data.orders || [];
+
+        // ✅ Filter only successful orders (status === 'success' or 'paid')
+        const successfulOrders = allOrders.filter(
+          (order: Order) => order.status === 'success' || order.status === 'paid'
+        );
+
+        setOrders(successfulOrders);
       } catch (error) {
         console.error('Failed to fetch orders', error);
       } finally {
@@ -133,7 +139,7 @@ function UserProfileContent() {
           <p className="text-center py-6">Loading orders...</p>
         ) : orders.length === 0 ? (
           <p className="text-center text-gray-500 py-8">
-            No orders found yet.
+            No successful orders found yet.
           </p>
         ) : (
           <div className="space-y-6">
@@ -156,16 +162,10 @@ function UserProfileContent() {
                     </p>
                   </div>
                   <span
-                    className={`px-3 py-1 rounded-full text-sm font-medium
-    ${order.status === 'failed'
-                        ? 'bg-red-100 text-red-700'
-                        : 'bg-green-100 text-green-700'
-                      }
-  `}
+                    className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-700"
                   >
-                    {order.status}
+                    Success
                   </span>
-
                 </div>
 
                 {/* Cart Items */}
@@ -194,7 +194,6 @@ function UserProfileContent() {
                     </div>
                   ))}
                 </div>
-
 
                 {/* Footer */}
                 <div className="flex justify-between mt-4 border-t pt-4">

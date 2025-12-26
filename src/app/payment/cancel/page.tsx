@@ -1,10 +1,11 @@
-// app/payment/cancel/page.tsx
 'use client';
 
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function PaymentCancelPage() {
+// Separate Client Component for using useSearchParams
+function CancelContent() {
   const searchParams = useSearchParams();
   const tran_id = searchParams.get('tran_id');
 
@@ -29,11 +30,11 @@ export default function PaymentCancelPage() {
         </div>
         
         <h1 className="text-3xl font-bold text-gray-900 mb-3">
-          পেমেন্ট বাতিল করা হয়েছে
+          Payment Cancelled
         </h1>
         
         <p className="text-gray-600 mb-6">
-          আপনি পেমেন্ট প্রক্রিয়া বাতিল করেছেন।
+          You have cancelled the payment process.
         </p>
 
         {/* Transaction Info */}
@@ -49,7 +50,7 @@ export default function PaymentCancelPage() {
         {/* Info Message */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
           <p className="text-sm text-blue-800">
-            💡 আপনার কার্ট এখনও সংরক্ষিত আছে। আপনি যেকোনো সময় পেমেন্ট সম্পন্ন করতে পারবেন।
+            💡 Your cart is still saved. You can complete the payment anytime.
           </p>
         </div>
         
@@ -59,29 +60,44 @@ export default function PaymentCancelPage() {
             href="/checkout"
             className="block w-full bg-cyan-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-cyan-700 transition-colors duration-200 shadow-md hover:shadow-lg"
           >
-            আবার চেষ্টা করুন
+            Try Again
           </Link>
           
           <Link
             href="/cart"
             className="block w-full border-2 border-gray-300 text-gray-700 py-3 px-6 rounded-lg font-semibold hover:bg-gray-50 transition-colors duration-200"
           >
-            কার্ট দেখুন
+            View Cart
           </Link>
 
           <Link
             href="/"
             className="block w-full text-gray-600 py-2 hover:text-gray-800 transition-colors duration-200"
           >
-            শপিং চালিয়ে যান
+            Continue Shopping
           </Link>
         </div>
 
         {/* Help Text */}
         <p className="text-xs text-gray-500 mt-6">
-          কোনো সহায়তা প্রয়োজন হলে আমাদের সাথে যোগাযোগ করুন
+          If you need any assistance, please contact us.
         </p>
       </div>
     </div>
+  );
+}
+
+export default function PaymentCancelPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-yellow-50 to-amber-50">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-cyan-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading payment status...</p>
+        </div>
+      </div>
+    }>
+      <CancelContent />
+    </Suspense>
   );
 }

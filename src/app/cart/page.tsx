@@ -8,7 +8,7 @@ export default function CartPage() {
   const { cart, removeFromCart, updateQuantity, getTotalPrice } = useCartContext();
   const router = useRouter();
 
-  if (!cart.length)
+  if (!cart.length) 
     return <p className="min-h-screen flex items-center justify-center mt-20 text-gray-500 text-lg">Your cart is empty.</p>;
 
   return (
