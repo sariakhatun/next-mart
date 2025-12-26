@@ -4,15 +4,18 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 import { useSession } from 'next-auth/react';
 import { CartItem } from '../types/cart';
 import { Product } from '../types/product';
+import Swal from 'sweetalert2';
 
 interface CartContextProps {
   cart: CartItem[];
   loading: boolean;
-  addToCart: (product: Product, quantity?: number) => Promise<void>;
+  addToCart: (product: Product, quantity?: number) => Promise<boolean>;
   removeFromCart: (productId: string) => Promise<void>;
   updateQuantity: (productId: string, newQuantity: number, stock: number) => Promise<void>;
-  clearCart: () => Promise<void>; // ✅ Added
+  clearCart: () => Promise<void>;
   getTotalPrice: () => number;
+  removePurchasedItems: (productIds: string[]) => Promise<void>;
+
 }
 
 const CartContext = createContext<CartContextProps | undefined>(undefined);
@@ -48,8 +51,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const addToCart = async (product: Product, quantity = 1) => {
     if (!userEmail) {
-      alert('Please login first!');
-      return;
+      Swal.fire({
+        icon: 'warning',
+        title: 'Login Required',
+        text: 'Please login first to add items to your cart',
+        confirmButtonText: 'OK',
+      }); return false;
     }
 
     const cartItem: CartItem = {
@@ -75,6 +82,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(cartItem),
     });
+    return true;
   };
 
   const removeFromCart = async (productId: string) => {
@@ -82,6 +90,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setCart(prev => prev.filter(item => item.id !== productId));
     await fetch(`/api/cart?userEmail=${userEmail}&productId=${productId}`, { method: 'DELETE' });
   };
+  const removePurchasedItems = async (productIds: string[]) => {
+  if (!userEmail) return;
+
+  setCart(prev => prev.filter(item => !productIds.includes(item.id)));
+
+  await fetch('/api/cart/remove-multiple', {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userEmail, productIds }),
+  });
+};
+
 
   const updateQuantity = async (productId: string, newQuantity: number, stock: number) => {
     if (!userEmail) return;
@@ -98,16 +118,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userEmail, productId, quantity: finalQty }),
     });
+
   };
 
-  // ✅ Clear Cart Function
+
   const clearCart = async () => {
     if (!userEmail) return;
-    
-    setCart([]); // Clear local state
-    
+
+    setCart([]);
+
     try {
-      // Clear cart in database
+
       await fetch(`/api/cart/clear`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
@@ -128,14 +149,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   return (
     <CartContext.Provider
-      value={{ 
-        cart, 
-        loading, 
-        addToCart, 
-        removeFromCart, 
-        updateQuantity, 
-        clearCart, // ✅ Added
-        getTotalPrice 
+      value={{
+        cart,
+        loading,
+        addToCart,
+        removeFromCart,
+        updateQuantity,
+        clearCart,
+        getTotalPrice,
+         removePurchasedItems
       }}
     >
       {children}

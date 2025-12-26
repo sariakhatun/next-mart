@@ -33,22 +33,24 @@ export default function ProductCard({ product }: ProductCardProps) {
     return 'text-green-600';
   };
 
-  const handleAddToCart = () => {
+ const handleAddToCart = async () => {
   if (product.stock > 0) {
-    addToCart(product);
-    // Show SweetAlert success message
-          Swal.fire({
-            icon: 'success',
-            title: 'Added to Cart',
-            text: ` item added successfully`,
-            timer: 1200,
-            showConfirmButton: false,
-          });
-    
+    const success = await addToCart(product); 
+
+    if (success) {
+      Swal.fire({
+        icon: 'success',
+        title: 'Added to Cart',
+        text: 'Item added successfully',
+        timer: 1200,
+        showConfirmButton: false,
+      });
+    }
   } else {
     alert('❌ Product out of stock!');
   }
 };
+
 
   return (
     <div className="group bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">

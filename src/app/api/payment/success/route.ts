@@ -73,7 +73,6 @@ export async function POST(req: NextRequest) {
       if (updateResult.modifiedCount > 0) {
         console.log('Order updated to paid status:', tran_id);
 
-        // ✅ CART CLEAR করুন এখানেই!
         if (userEmail) {
           try {
             const cartCollection = await dbConnect('cart');

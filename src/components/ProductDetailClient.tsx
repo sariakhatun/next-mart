@@ -29,33 +29,34 @@ export default function ProductDetailClient({ product }: { product: Product }) {
   };
 
   const handleAddToCart = async () => {
-    if (product.stock === 0) {
-      Swal.fire('Out of stock', '', 'error');
-      return;
-    }
+  if (product.stock === 0) {
+    Swal.fire('Out of stock', '', 'error');
+    return;
+  }
 
-    try {
-      // Add product to cart context and backend
-      await addToCart({ ...product }, quantity);
+  try {
+    const success = await addToCart({ ...product }, quantity); 
 
-      // Show SweetAlert success message
-      Swal.fire({
-        icon: 'success',
-        title: 'Added to Cart',
-        text: `${quantity} item(s) added successfully`,
-        timer: 1200,
-        showConfirmButton: false,
-      });
+    if (!success) return; 
 
-      // Redirect to cart page after a short delay
-      setTimeout(() => {
-        router.push('/cart');
-      }, 1300);
-    } catch (error) {
-      Swal.fire('Error', 'Failed to add product to cart', 'error');
-      console.error(error);
-    }
-  };
+    Swal.fire({
+      icon: 'success',
+      title: 'Added to Cart',
+      text: `${quantity} item(s) added successfully`,
+      timer: 1200,
+      showConfirmButton: false,
+    });
+
+    setTimeout(() => {
+      router.push('/cart');
+    }, 1300);
+
+  } catch (error) {
+    Swal.fire('Error', 'Failed to add product to cart', 'error');
+    console.error(error);
+  }
+};
+
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">

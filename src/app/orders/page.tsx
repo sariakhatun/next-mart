@@ -57,7 +57,7 @@ export default function OrdersPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-cyan-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">লোড হচ্ছে...</p>
+          <p className="text-gray-600">loading...</p>
         </div>
       </div>
     );
@@ -65,16 +65,16 @@ export default function OrdersPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">আমার অর্ডার</h1>
+      <h1 className="text-3xl font-bold mb-6">My Order</h1>
 
       {orders.length === 0 ? (
         <div className="text-center py-12 bg-gray-50 rounded-lg">
-          <p className="text-gray-600 mb-4">আপনার কোনো অর্ডার নেই</p>
+          <p className="text-gray-600 mb-4">You don't have any order</p>
           <Link
             href="/"
             className="inline-block bg-cyan-600 text-white px-6 py-3 rounded-lg hover:bg-cyan-700"
           >
-            শপিং শুরু করুন
+            continue shopping
           </Link>
         </div>
       ) : (
@@ -123,7 +123,7 @@ export default function OrdersPage() {
 
               <div className="flex justify-between items-center pt-4 border-t">
                 <p className="text-sm text-gray-500">
-                  {new Date(order.createdAt).toLocaleDateString('bn-BD', {
+                  {new Date(order.createdAt).toLocaleDateString('en-BD', {
                     day: 'numeric',
                     month: 'long',
                     year: 'numeric',
