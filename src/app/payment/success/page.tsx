@@ -84,7 +84,7 @@ function SuccessContent() {
         {/* Action Buttons */}
         <div className="space-y-3">
           <Link
-            href="/orders"
+            href="/profile/orders"
             className="block w-full bg-cyan-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-cyan-700 transition-colors duration-200 shadow-md hover:shadow-lg"
           >
             View My Orders

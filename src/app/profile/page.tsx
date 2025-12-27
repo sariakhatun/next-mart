@@ -8,8 +8,6 @@ import Image from 'next/image';
 import { Order } from '@/src/types/order';
 import { CartItem } from '@/src/types/cart';
 
-/* ================= CONTENT ================= */
-
 function UserProfileContent() {
   const { data: session, status } = useSession();
   const searchParams = useSearchParams();
@@ -18,11 +16,9 @@ function UserProfileContent() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
 
-  /* ===== Login success toast ===== */
   useEffect(() => {
     if (status === 'authenticated' && session) {
       const loginStatus = searchParams.get('login');
-
       if (loginStatus === 'success') {
         Swal.fire({
           icon: 'success',
@@ -41,7 +37,6 @@ function UserProfileContent() {
     }
   }, [status, session, router, searchParams]);
 
-  /* ===== Fetch Orders ===== */
   useEffect(() => {
     if (status !== 'authenticated') return;
 
@@ -49,10 +44,8 @@ function UserProfileContent() {
       try {
         const res = await fetch('/api/orders');
         const data = await res.json();
-
         const allOrders = Array.isArray(data) ? data : data.orders || [];
 
-        // ✅ Filter only successful orders (status === 'success' or 'paid')
         const successfulOrders = allOrders.filter(
           (order: Order) => order.status === 'success' || order.status === 'paid'
         );
@@ -60,6 +53,7 @@ function UserProfileContent() {
         setOrders(successfulOrders);
       } catch (error) {
         console.error('Failed to fetch orders', error);
+        Swal.fire('Error', 'Failed to load orders', 'error');
       } finally {
         setLoadingOrders(false);
       }
@@ -68,160 +62,170 @@ function UserProfileContent() {
     fetchOrders();
   }, [status]);
 
-  /* ===== States ===== */
   if (status === 'loading') {
     return (
-      <p className="text-center mt-20 text-xl">
-        Loading your profile...
-      </p>
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-2xl text-gray-600">Loading your profile...</p>
+      </div>
     );
   }
 
   if (!session) {
     return (
-      <p className="text-center mt-20 text-xl text-red-600">
-        You must be logged in to view this page.
-      </p>
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-2xl text-red-600 font-medium">
+          You must be logged in to view this page.
+        </p>
+      </div>
     );
   }
 
-  /* ================= UI ================= */
-
   return (
-    <div className="my-8 max-w-4xl mx-auto p-8 bg-white shadow-2xl rounded-2xl">
-      {/* ===== User Info ===== */}
-      <div className="flex flex-col items-center mb-10">
-        {session.user?.image && (
-          <div className="w-32 h-32 relative mb-6 rounded-full overflow-hidden border-4 border-cyan-600 shadow-lg">
-            <Image
-              src={session.user.image}
-              alt={session.user.name || 'Profile Picture'}
-              fill
-              className="object-cover"
-            />
+    <div className="min-h-screen bg-gray-50 py-12 ">
+      <div className="max-w-7xl px-5 mx-auto">
+
+        <div className="bg-gradient-to-br from-cyan-500 to-blue-600 rounded-3xl shadow-2xl p-8 md:p-12 text-white mb-10 overflow-hidden relative">
+          <div className="absolute inset-0 bg-black opacity-20"></div>
+          <div className="relative z-10 flex flex-col items-center text-center">
+            {session.user?.image ? (
+              <div className="w-32 h-32 md:w-40 md:h-40 relative mb-6 rounded-full overflow-hidden border-8 border-white shadow-2xl">
+                <Image
+                  src={session.user.image}
+                  alt={session.user.name || 'Profile'}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            ) : (
+              <div className="w-32 h-32 md:w-40 md:h-40 bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center text-6xl font-bold mb-6">
+                {session.user?.name?.[0]?.toUpperCase() || 'U'}
+              </div>
+            )}
+
+            <h1 className="text-3xl md:text-5xl font-bold mb-3">
+              {session.user?.name || 'User'}
+            </h1>
+            <p className="text-xl md:text-2xl opacity-90 mb-8">
+              {session.user?.email}
+            </p>
+
+            <button
+              onClick={async () => {
+                await signOut({ redirect: false });
+                Swal.fire({
+                  icon: 'info',
+                  title: '👋 Logged Out',
+                  text: 'You have been successfully logged out.',
+                  confirmButtonColor: '#06b6d4',
+                }).then(() => {
+                  window.location.href = '/';
+                });
+              }}
+              className="bg-white text-cyan-600 px-8 py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl hover:bg-gray-100 transition-all transform hover:scale-105"
+            >
+              Logout
+            </button>
           </div>
-        )}
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">
-          {session.user?.name}
-        </h1>
-        <p className="text-xl text-gray-600">
-          {session.user?.email}
-        </p>
-      </div>
+        </div>
 
-      {/* ===== Logout Button ===== */}
-      <div className="flex justify-center mb-10">
-        <button
-          onClick={async () => {
-            await signOut({ redirect: false });
-            Swal.fire({
-              icon: 'info',
-              title: 'Logged Out',
-              text: 'You have been successfully logged out.',
-              confirmButtonColor: '#06b6d4',
-            }).then(() => {
-              window.location.href = '/';
-            });
-          }}
-          className="bg-gradient-to-r from-red-500 to-red-600 text-white px-8 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl"
-        >
-          Logout
-        </button>
-      </div>
+        {/* ===== Order History Section ===== */}
+        <div className="bg-white rounded-3xl shadow-xl p-6 md:p-10">
+          <h2 className="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-3">
+            <span className="text-cyan-600">🛍️</span> Order History
+          </h2>
 
-      {/* ===== Order History ===== */}
-      <div className="bg-gray-50 rounded-xl p-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">
-          Order History
-        </h2>
-
-        {loadingOrders ? (
-          <p className="text-center py-6">Loading orders...</p>
-        ) : orders.length === 0 ? (
-          <p className="text-center text-gray-500 py-8">
-            No successful orders found yet.
-          </p>
-        ) : (
-          <div className="space-y-6">
-            {orders.map(order => (
-              <div
-                key={order._id}
-                className="border rounded-xl p-6 bg-white shadow"
-              >
-                {/* Header */}
-                <div className="flex justify-between items-center mb-4">
-                  <div>
-                    <p className="font-semibold">
-                      Transaction ID: {order.transactionId}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      Paid at:{' '}
-                      {order.paidAt
-                        ? new Date(order.paidAt).toLocaleString()
-                        : 'N/A'}
-                    </p>
+          {loadingOrders ? (
+            <div className="text-center py-16">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-cyan-600"></div>
+              <p className="mt-4 text-gray-600">Loading your orders...</p>
+            </div>
+          ) : orders.length === 0 ? (
+            <div className="text-center py-16 bg-gray-50 rounded-2xl">
+              <p className="text-2xl text-gray-500 mb-4">No orders yet</p>
+              <p className="text-gray-600">When you place an order, it will appear here.</p>
+            </div>
+          ) : (
+            <div className="space-y-8">
+              {orders.map((order) => (
+                <div
+                  key={order._id}
+                  className="border border-gray-200 rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow"
+                >
+                  {/* Order Header */}
+                  <div className="bg-gradient-to-r from-cyan-600 to-blue-600 text-white p-5">
+                    <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
+                      <div>
+                        <p className="text-lg font-bold">Transaction ID: {order.transactionId}</p>
+                        <p className="text-sm opacity-90">
+                          Paid on: {order.paidAt ? new Date(order.paidAt).toLocaleString() : 'N/A'}
+                        </p>
+                      </div>
+                      <span className="px-4 py-2 bg-white/20 rounded-full text-sm font-semibold backdrop-blur-sm">
+                        ✓ Payment Successful
+                      </span>
+                    </div>
                   </div>
-                  <span
-                    className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-700"
-                  >
-                    Success
-                  </span>
-                </div>
 
-                {/* Cart Items */}
-                <div className="divide-y">
-                  {order.cartItems.map((item: CartItem, index: number) => (
-                    <div key={index} className="flex justify-between py-3">
-                      <div className="flex gap-3">
-                        <Image
-                          src={item.image}
-                          alt={item.name}
-                          width={48}
-                          height={48}
-                          className="rounded object-cover"
-                        />
-                        <div>
-                          <p className="font-medium">{item.name}</p>
-                          <p className="text-sm text-gray-500">
-                            Qty: {item.quantity}
+                  {/* Order Items */}
+                  <div className="p-6">
+                    <div className="grid gap-4">
+                      {order.cartItems.map((item: CartItem, index: number) => (
+                        <div
+                          key={index}
+                          className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 py-4 border-b border-gray-100 last:border-0"
+                        >
+                          <div className="flex items-center gap-4">
+                            <div className="w-16 h-16 relative flex-shrink-0">
+                              <Image
+                                src={item.image}
+                                alt={item.name}
+                                fill
+                                className="rounded-lg object-cover shadow-sm"
+                              />
+                            </div>
+                            <div>
+                              <p className="font-semibold text-gray-900">{item.name}</p>
+                              <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
+                            </div>
+                          </div>
+                          <p className="font-bold text-lg text-cyan-600 text-right sm:text-left">
+                            ৳{(item.price * item.quantity).toLocaleString()}
                           </p>
                         </div>
-                      </div>
-
-                      <p className="font-semibold">
-                        ৳ {item.price * item.quantity}
-                      </p>
+                      ))}
                     </div>
-                  ))}
-                </div>
 
-                {/* Footer */}
-                <div className="flex justify-between mt-4 border-t pt-4">
-                  <p className="text-sm text-gray-600">
-                    Payment: {order.paymentMethod}
-                  </p>
-                  <p className="text-lg font-bold">
-                    Total: ৳ {order.amount}
-                  </p>
+                    {/* Order Footer */}
+                    <div className="mt-6 pt-6 border-t border-gray-200 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+                      <div className="text-sm text-gray-600">
+                        <span className="font-medium">Payment Method:</span> {order.paymentMethod}
+                      </div>
+                      <div className="text-right">
+                        <p className="text-2xl font-bold text-gray-900">
+                          Total: ৳{order.amount.toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
-/* ================= SUSPENSE ================= */
-
 export default function UserProfile() {
   return (
     <Suspense
       fallback={
-        <div className="text-center mt-20 text-xl">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-600"></div>
-          <p className="mt-4">Loading profile...</p>
+        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-cyan-600"></div>
+            <p className="mt-6 text-xl text-gray-700">Loading your profile...</p>
+          </div>
         </div>
       }
     >
