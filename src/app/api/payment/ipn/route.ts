@@ -46,13 +46,12 @@ export async function POST(req: NextRequest) {
       (validation.status === 'VALID' || validation.status === 'VALIDATED');
 
     if (isValid) {
-      // ✅ IPN দিয়ে ORDER UPDATE (যদি আগে update না হয়ে থাকে)
       const ordersCollection = await dbConnect('orders');
 
       await ordersCollection.updateOne(
         { 
           transactionId: tran_id,
-          paid: false // শুধু unpaid orders update করবে
+          paid: false 
         },
         {
           $set: {

@@ -1,6 +1,5 @@
 // types/sslcommerz-lts.d.ts
 declare module 'sslcommerz-lts' {
-  /* ---------- INIT DATA ---------- */
   export interface SSLCommerzInitData {
     total_amount: number;
     currency: string;
@@ -32,7 +31,6 @@ declare module 'sslcommerz-lts' {
     value_c?: string;
   }
 
-  /* ---------- INIT RESPONSE ---------- */
   export interface SSLCommerzResponse {
     status: 'SUCCESS' | 'FAILED';
     GatewayPageURL?: string;
@@ -40,7 +38,6 @@ declare module 'sslcommerz-lts' {
     [key: string]: unknown;
   }
 
-  /* ---------- VALIDATION ---------- */
   export interface SSLCommerzValidationPayload {
     val_id: string;
   }
@@ -54,7 +51,6 @@ declare module 'sslcommerz-lts' {
     [key: string]: unknown;
   }
 
-  /* ---------- MAIN CLASS ---------- */
   export default class SSLCommerzPayment {
     constructor(
       storeId: string,

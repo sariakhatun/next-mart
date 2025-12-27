@@ -72,9 +72,9 @@ export default function ProductDetailClient({ product }: { product: Product }) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-        {/* Image Gallery Section */}
+       
         <div className="space-y-4">
-          {/* Main Image */}
+          
           <div className="relative aspect-square rounded-xl overflow-hidden bg-gray-50 shadow-lg">
             <Image
               src={selectedImage}
@@ -85,7 +85,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
             />
           </div>
 
-          {/* Thumbnails */}
+         
           {product.images && product.images.length > 1 && (
             <div className="grid grid-cols-4 gap-3">
               {[product.image, ...product.images.slice(1)].map((img, index) => (
@@ -110,7 +110,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
           )}
         </div>
 
-        {/* Details Section */}
+      
         <div className="space-y-6">
           <div>
             <p className="text-sm text-cyan-600 font-semibold uppercase tracking-wide mb-2">
@@ -120,7 +120,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
               {product.name}
             </h1>
 
-            {/* Rating */}
+           
             {product.rating && (
               <div className="flex items-center gap-2 mb-4">
                 {Array.from({ length: 5 }, (_, i) => (
@@ -137,7 +137,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
               </div>
             )}
 
-            {/* Price */}
+           
             <div className="mb-6">
               {discountedPrice ? (
                 <div className="flex items-center gap-3">
@@ -158,7 +158,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
               )}
             </div>
 
-            {/* Stock Status */}
+           
             <p
               className={`text-lg font-medium mb-6 ${
                 product.stock > 10
@@ -175,13 +175,13 @@ export default function ProductDetailClient({ product }: { product: Product }) {
                 : 'Out of Stock'}
             </p>
 
-            {/* Description */}
+            
             <div className="mb-8">
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Description</h3>
               <p className="text-gray-600 leading-relaxed">{product.description}</p>
             </div>
 
-            {/* Quantity + Add to Cart */}
+          
             {product.stock > 0 && (
               <div className="flex flex-col sm:flex-row gap-4 items-center">
                 <div className="flex items-center border border-gray-300 rounded-lg shadow-sm">

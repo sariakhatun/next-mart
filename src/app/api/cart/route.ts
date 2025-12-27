@@ -25,10 +25,8 @@ export async function POST(req: NextRequest) {
   try {
     const cartCollection = await dbConnect('cart');
 
-    // check if product already in cart
     const existing = await cartCollection.findOne({ userEmail: data.userEmail, id: data.id });
     if (existing) {
-      // increase quantity (but not exceed stock)
       const updatedQty = Math.min(existing.quantity + data.quantity, data.stock);
       await cartCollection.updateOne(
         { userEmail: data.userEmail, id: data.id },
@@ -75,7 +73,7 @@ export async function DELETE(req: NextRequest) {
 
     const result = await cartCollection.deleteOne({
       userEmail,
-      id: productId, // ✅ string match
+      id: productId, 
     });
 
     return NextResponse.json(

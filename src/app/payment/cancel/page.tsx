@@ -4,7 +4,6 @@ import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-// Separate Client Component for using useSearchParams
 function CancelContent() {
   const searchParams = useSearchParams();
   const tran_id = searchParams.get('tran_id');
@@ -12,7 +11,7 @@ function CancelContent() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-yellow-50 to-amber-50 px-4">
       <div className="max-w-md w-full bg-white shadow-2xl rounded-2xl p-8 text-center">
-        {/* Cancel Icon */}
+       
         <div className="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
           <svg
             className="w-10 h-10 text-yellow-600"
@@ -37,7 +36,7 @@ function CancelContent() {
           You have cancelled the payment process.
         </p>
 
-        {/* Transaction Info */}
+        
         {tran_id && (
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
             <p className="text-xs text-yellow-600 mb-1">Transaction ID</p>
@@ -47,14 +46,14 @@ function CancelContent() {
           </div>
         )}
 
-        {/* Info Message */}
+       
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
           <p className="text-sm text-blue-800">
             💡 Your cart is still saved. You can complete the payment anytime.
           </p>
         </div>
         
-        {/* Action Buttons */}
+       
         <div className="space-y-3">
           <Link
             href="/checkout"
@@ -78,7 +77,7 @@ function CancelContent() {
           </Link>
         </div>
 
-        {/* Help Text */}
+        
         <p className="text-xs text-gray-500 mt-6">
           If you need any assistance, please contact us.
         </p>

@@ -10,7 +10,7 @@ export default function HeroSection() {
       
       <div className="relative w-full h-[500px]">
         
-        {/* Background Image */}
+      
         <Image
           src={banner}
           alt="Hero background"
@@ -19,13 +19,13 @@ export default function HeroSection() {
           className="object-cover object-center opacity-100" // 
         />
 
-        {/* Dark overlay */}
+        
         <div className="absolute inset-0 bg-black/60"></div>
 
-        {/* Optional grid overlay */}
+       
         <div className="absolute inset-0 bg-grid-gray-200/10 opacity-20"></div>
 
-        {/* Content Container */}
+       
         <div className="relative container  px-4 h-full flex flex-col justify-center max-w-7xl mx-auto">
           
          

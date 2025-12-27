@@ -15,7 +15,6 @@ export async function DELETE(req: NextRequest) {
 
     const cartCollection = await dbConnect('cart');
     
-    // Delete all cart items for this user
     await cartCollection.deleteMany({ userEmail });
 
     return NextResponse.json({ 

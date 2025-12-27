@@ -5,9 +5,9 @@ import { dbConnect } from '@/src/lib/dbConnect';
 import { Product, ProductDocument } from '@/src/types/product';
 
 export async function getProductById(id: string): Promise<Product> {
-  // Validate ObjectId
+ 
   if (!ObjectId.isValid(id)) {
-    notFound(); // 404 page
+    notFound(); 
   }
 
   const collection = await dbConnect('product_services');
@@ -17,7 +17,7 @@ export async function getProductById(id: string): Promise<Product> {
   });
 
   if (!document) {
-    notFound(); // clean 404 page
+    notFound(); 
   }
 
   return {

@@ -7,7 +7,7 @@ import React from 'react';
 
 interface LogoutButtonProps {
   className?: string;
-  redirectUrl?: string; // default redirect after logout
+  redirectUrl?: string; 
 }
 
 const LogoutButton: React.FC<LogoutButtonProps> = ({
@@ -15,7 +15,7 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({
   redirectUrl = '/',
 }) => {
   const handleLogout = async () => {
-    await signOut({ redirect: false }); // prevent auto redirect
+    await signOut({ redirect: false }); 
 
     Swal.fire({
       icon: 'info',

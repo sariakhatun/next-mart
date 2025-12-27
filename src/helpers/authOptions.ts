@@ -12,7 +12,7 @@ export const authOptions: AuthOptions = {
   secret: process.env.AUTH_SECRET,
   callbacks: {
     async signIn({ user }) {
-      if (!user.email) return false; // Safety: email must exist
+      if (!user.email) return false; 
 
       try {
         const users = await getCollection("users");
@@ -27,7 +27,7 @@ export const authOptions: AuthOptions = {
           });
         }
 
-        return true; // allow sign in
+        return true; 
       } catch (err) {
         console.error("Error saving user to MongoDB:", err);
         return false;
@@ -35,7 +35,7 @@ export const authOptions: AuthOptions = {
     },
 
     async session({ session }) {
-      return session; // session object safe
+      return session; 
     },
   },
  

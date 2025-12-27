@@ -62,7 +62,6 @@ export default function CheckoutPage() {
       const data = await res.json();
       console.log(data)
       if (res.ok && data.success && data.paymentUrl) {
-        // SSLCommerz hosted page-এ redirect
         window.location.href = data.paymentUrl;
       } else {
         Swal.fire('Payment Initiation Failed', data.message || 'Try again', 'error');
@@ -107,7 +106,7 @@ export default function CheckoutPage() {
         </div>
       </div>
 
-      {/* Shipping Form */}
+      
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"

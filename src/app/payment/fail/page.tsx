@@ -4,7 +4,6 @@ import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-// Separate Client Component for using useSearchParams
 function FailContent() {
   const searchParams = useSearchParams();
   const reason = searchParams.get('reason');
@@ -26,7 +25,7 @@ function FailContent() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-orange-50 px-4">
       <div className="max-w-md w-full bg-white shadow-2xl rounded-2xl p-8 text-center">
-        {/* Error Icon */}
+       
         <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
           <svg
             className="w-10 h-10 text-red-600"
@@ -51,7 +50,7 @@ function FailContent() {
           {getErrorMessage(reason)}
         </p>
 
-        {/* Error Details */}
+        
         {(tran_id || reason) && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
             {tran_id && (
@@ -73,7 +72,7 @@ function FailContent() {
           </div>
         )}
 
-        {/* Possible Reasons */}
+        
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 text-left">
           <p className="text-sm font-semibold text-yellow-800 mb-2">
             Possible Reasons:
@@ -86,7 +85,7 @@ function FailContent() {
           </ul>
         </div>
         
-        {/* Action Buttons */}
+        
         <div className="space-y-3">
           <Link
             href="/checkout"
@@ -110,7 +109,7 @@ function FailContent() {
           </Link>
         </div>
 
-        {/* Support Info */}
+      
         <div className="mt-6 pt-6 border-t border-gray-200">
           <p className="text-xs text-gray-500">
             Contact us for assistance

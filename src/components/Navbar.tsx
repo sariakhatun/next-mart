@@ -45,9 +45,9 @@ export default function Navbar() {
             <span className="text-2xl font-bold text-gray-900">NextMart</span>
           </Link>
 
-          {/* Desktop Navigation */}
+          
           <div className="hidden md:flex items-center space-x-8">
-            {/* Main Nav Links */}
+            
             {navLinks.map((link) => (
               <Link
                 key={link.href}

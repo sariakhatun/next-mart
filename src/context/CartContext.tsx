@@ -88,7 +88,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const removeFromCart = async (productId: string) => {
   if (!userEmail) return;
 
-  // optimistic UI
   setCart(prev => prev.filter(item => item.id !== productId));
 
   const res = await fetch(
@@ -100,7 +99,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   if (!res.ok || result.deletedCount === 0) {
     console.error('Delete failed, refetching cart');
-    fetchCart(); // rollback / sync again
+    fetchCart(); 
   }
 };
 

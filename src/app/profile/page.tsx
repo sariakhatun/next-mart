@@ -128,7 +128,6 @@ function UserProfileContent() {
           </div>
         </div>
 
-        {/* ===== Order History Section ===== */}
         <div className="bg-white rounded-3xl shadow-xl p-6 md:p-10">
           <h2 className="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-3">
             <span className="text-cyan-600">🛍️</span> Order History

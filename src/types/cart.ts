@@ -2,5 +2,5 @@ import { Product } from "./product";
 
 export interface CartItem extends Product {
   quantity: number;
-  userEmail: string; // associate cart with user
+  userEmail: string; 
 }

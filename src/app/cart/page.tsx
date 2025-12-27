@@ -45,7 +45,7 @@ export default function CartPage() {
       <h1 className="text-3xl font-bold mb-8 text-center sm:text-left">Shopping Cart ({itemCount} {itemCount > 1 ? 'items' : 'item'})</h1>
 
       <div className="grid lg:grid-cols-3 gap-8">
-        {/* Left: Cart Items */}
+       
         <div className="lg:col-span-2">
           <div className="space-y-4">
             {cart.map((item) => {
@@ -92,7 +92,7 @@ export default function CartPage() {
                         )}
                       </div>
 
-                      {/* Quantity Controls */}
+                      
                       <div className="flex items-center justify-center sm:justify-start gap-4 mb-4">
                         <div className="flex items-center gap-3 border rounded-lg">
                           <button
@@ -113,7 +113,7 @@ export default function CartPage() {
                         </div>
                       </div>
 
-                      {/* Stock Warning */}
+                 
                       {item.quantity >= item.stock && (
                         <p className="text-xs text-orange-600 mt-2 text-center sm:text-left">
                           Maximum stock reached ({item.stock} available)
@@ -121,7 +121,7 @@ export default function CartPage() {
                       )}
                     </div>
 
-                    {/* Action Buttons + Item Total */}
+                    
                     <div className="grid grid-cols-[24px_1fr] gap-x-3 gap-y-3 w-full sm:w-36 mt-4 sm:mt-0">
 
                       {/* Remove */}
@@ -198,7 +198,7 @@ export default function CartPage() {
               </div>
             </div>
 
-            {/* Voucher */}
+           
             <div className="mt-6">
               <label className="text-sm font-medium text-gray-700 mb-2 block">
                 Voucher Code (Optional)

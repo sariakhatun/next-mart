@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ShoppingCart, Star, Eye } from 'lucide-react';
 import { Product } from '../types/product';
-import { useCart } from '../hooks/useCart';
 import Swal from 'sweetalert2';
 import { useCartContext } from '../context/CartContext';
 

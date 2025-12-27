@@ -1,6 +1,5 @@
 'use client';
 
-import React from "react";
 import { FiTruck, FiShield, FiTag, FiHeadphones } from "react-icons/fi";
 import { motion } from "framer-motion";
 import SectionTitle from "./SectionTitle";

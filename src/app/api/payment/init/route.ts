@@ -44,7 +44,6 @@ export async function POST(req: NextRequest) {
     const body = await req.json() as RequestBody;
     const { cartItems, shippingInfo, totalAmount } = body;
 
-    // Validation
     if (!cartItems || cartItems.length === 0) {
       return NextResponse.json(
         { success: false, message: 'Cart is empty' },
@@ -61,7 +60,6 @@ export async function POST(req: NextRequest) {
 
     const tran_id = `TXN${Date.now()}${Math.floor(Math.random() * 1000)}`;
 
-    // ✅ DATABASE এ ORDER CREATE করুন (PAID: FALSE)
     try {
       const ordersCollection = await dbConnect('orders');
       
@@ -72,7 +70,7 @@ export async function POST(req: NextRequest) {
         shippingInfo: shippingInfo,
         amount: totalAmount,
         currency: 'BDT',
-        status: 'pending', // বা 'unpaid'
+        status: 'pending', 
         paid: false,
         paymentMethod: null,
         val_id: null,
@@ -91,7 +89,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // SSLCommerz payment data
     const paymentData = {
       store_id: store_id,
       store_passwd: store_passwd,
@@ -126,7 +123,7 @@ export async function POST(req: NextRequest) {
       multi_card_name: 'mastercard,visacard,amexcard',
       
       value_a: session.user.email,
-      value_b: tran_id, // শুধু transaction ID পাঠান
+      value_b: tran_id, 
       value_c: '',
     };
 
@@ -158,7 +155,6 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // যদি payment init fail হয়, order delete করুন
     try {
       const ordersCollection = await dbConnect('orders');
       await ordersCollection.deleteOne({ transactionId: tran_id });

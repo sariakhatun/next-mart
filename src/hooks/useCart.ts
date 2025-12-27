@@ -13,7 +13,6 @@ export function useCart() {
 
   const userEmail = session?.user?.email;
 
-  // fetch cart from MongoDB
   const fetchCart = async () => {
     if (!userEmail) return;
     try {
@@ -26,7 +25,6 @@ export function useCart() {
     }
   };
 
-  // ✅ Fix for "Calling setState synchronously within an effect"
   useEffect(() => {
     if (!userEmail) return;
 
@@ -50,8 +48,8 @@ export function useCart() {
     });
     if (res.ok) {
       alert('✅ Product added to cart!');
-      fetchCart(); // refresh cart
-      router.push('/cart'); // redirect to cart page
+      fetchCart();
+      router.push('/cart');
     }
   };
 
@@ -61,11 +59,9 @@ export function useCart() {
     fetchCart();
   };
 
-  // updateQuantity already does optimistic updates
   const updateQuantity = async (productId: number | string, newQuantity: number, stock: number) => {
     if (!userEmail) return;
 
-    // Optimistic update for UI
     setCart(prev =>
       prev.map(item =>
         String(item.id) === String(productId)
@@ -74,7 +70,6 @@ export function useCart() {
       )
     );
 
-    // Sync with MongoDB
     try {
       await fetch('/api/cart', {
         method: 'PUT',
@@ -83,7 +78,7 @@ export function useCart() {
       });
     } catch (err) {
       console.error(err);
-      fetchCart(); // fallback if API fails
+      fetchCart(); 
     }
   };
 

@@ -13,7 +13,6 @@ export async function POST(req: NextRequest) {
 
     console.log('Payment CANCELLED by user:', { tran_id });
 
-    // ✅ ORDER STATUS UPDATE করুন (CANCELLED)
     if (tran_id) {
       const ordersCollection = await dbConnect('orders');
       await ordersCollection.updateOne(

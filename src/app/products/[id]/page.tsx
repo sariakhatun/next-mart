@@ -5,9 +5,9 @@ import { Product } from '@/src/types/product';
 export default async function ProductDetails({
   params,
 }: {
-  params: Promise<{ id: string }>; // note: Promise here
+  params: Promise<{ id: string }>; 
 }) {
-  const { id } = await params;       // unwrap the promise
+  const { id } = await params;      
   console.log('Params ID:', id);
 
   const product: Product = await getProductById(id);

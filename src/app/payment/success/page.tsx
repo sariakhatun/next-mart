@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 import { useCartContext } from '@/src/context/CartContext';
 
-// Separate Client Component that uses useSearchParams and useEffect
 function SuccessContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -15,7 +14,6 @@ function SuccessContent() {
   const tran_id = searchParams.get('tran_id');
   const amount = searchParams.get('amount');
 
-  // Use ref to track if cart has been cleared (prevent multiple clears)
   const hasCleared = useRef(false);
 
   useEffect(() => {
@@ -23,12 +21,12 @@ function SuccessContent() {
       hasCleared.current = true;
       clearCart();
     }
-  }, [tran_id, clearCart]); // clearCart is stable from context, safe to include
+  }, [tran_id, clearCart]); 
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-cyan-50 px-4">
       <div className="max-w-md w-full bg-white shadow-2xl rounded-2xl p-8 text-center">
-        {/* Success Icon */}
+        
         <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
           <svg
             className="w-10 h-10 text-green-600"
@@ -53,7 +51,7 @@ function SuccessContent() {
           Your order has been successfully completed. Thank you!
         </p>
         
-        {/* Order Details */}
+       
         <div className="bg-gray-50 rounded-lg p-4 mb-6">
           {tran_id && (
             <div className="mb-3">
@@ -74,14 +72,14 @@ function SuccessContent() {
           )}
         </div>
 
-        {/* Confirmation Message */}
+        
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
           <p className="text-sm text-blue-800">
             📧 A confirmation email has been sent to your inbox.
           </p>
         </div>
         
-        {/* Action Buttons */}
+       
         <div className="space-y-3">
           <Link
             href="/profile/orders"
@@ -98,7 +96,7 @@ function SuccessContent() {
           </Link>
         </div>
 
-        {/* Support Info */}
+        
         <p className="text-xs text-gray-500 mt-6">
           If you have any issues, please contact us.
         </p>

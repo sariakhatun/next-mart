@@ -68,7 +68,7 @@ export default function CategoriesSection() {
           </p>
         </div>
 
-        {/* Categories Grid */}
+
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-6">
           {categories.map((category) => {
             const Icon = category.icon;
@@ -80,17 +80,16 @@ export default function CategoriesSection() {
                 className="group"
               >
                 <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg hover:border-cyan-500 transition-all duration-300">
-                  {/* Icon */}
+                 
                   <div className={`${category.color} w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform`}>
                     <Icon className="w-8 h-8" />
                   </div>
 
-                  {/* Category Name */}
+                
                   <h3 className="font-semibold text-gray-900 text-center mb-2 group-hover:text-cyan-500  transition-colors">
                     {category.name}
                   </h3>
 
-                  {/* Product Count */}
                   <p className="text-sm text-gray-500 text-center">
                     {category.count} items
                   </p>
