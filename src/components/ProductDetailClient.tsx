@@ -29,33 +29,41 @@ export default function ProductDetailClient({ product }: { product: Product }) {
   };
 
   const handleAddToCart = async () => {
-  if (product.stock === 0) {
-    Swal.fire('Out of stock', '', 'error');
-    return;
-  }
+    if (product.stock === 0) {
+      Swal.fire('Out of stock', '', 'error');
+      return;
+    }
 
-  try {
-    const success = await addToCart({ ...product }, quantity); 
+    try {
+      //const success = await addToCart({ ...product }, quantity); 
+      const success = await addToCart(
+        {
+          ...product,
+          image: selectedImage,
+        },
+        quantity
+      );
 
-    if (!success) return; 
 
-    Swal.fire({
-      icon: 'success',
-      title: 'Added to Cart',
-      text: `${quantity} item(s) added successfully`,
-      timer: 1200,
-      showConfirmButton: false,
-    });
+      if (!success) return;
 
-    setTimeout(() => {
-      router.push('/cart');
-    }, 1300);
+      Swal.fire({
+        icon: 'success',
+        title: 'Added to Cart',
+        text: `${quantity} item(s) added successfully`,
+        timer: 1200,
+        showConfirmButton: false,
+      });
 
-  } catch (error) {
-    Swal.fire('Error', 'Failed to add product to cart', 'error');
-    console.error(error);
-  }
-};
+      setTimeout(() => {
+        router.push('/cart');
+      }, 1300);
+
+    } catch (error) {
+      Swal.fire('Error', 'Failed to add product to cart', 'error');
+      console.error(error);
+    }
+  };
 
 
   return (
@@ -72,9 +80,9 @@ export default function ProductDetailClient({ product }: { product: Product }) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-       
+
         <div className="space-y-4">
-          
+
           <div className="relative aspect-square rounded-xl overflow-hidden bg-gray-50 shadow-lg">
             <Image
               src={selectedImage}
@@ -85,18 +93,17 @@ export default function ProductDetailClient({ product }: { product: Product }) {
             />
           </div>
 
-         
+
           {product.images && product.images.length > 1 && (
             <div className="grid grid-cols-4 gap-3">
               {[product.image, ...product.images.slice(1)].map((img, index) => (
                 <button
                   key={index}
                   onClick={() => setSelectedImage(img)}
-                  className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all shadow-sm hover:shadow-md ${
-                    selectedImage === img
+                  className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all shadow-sm hover:shadow-md ${selectedImage === img
                       ? 'border-cyan-600 ring-2 ring-cyan-600 ring-offset-2'
                       : 'border-gray-200'
-                  }`}
+                    }`}
                 >
                   <Image
                     src={img}
@@ -110,7 +117,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
           )}
         </div>
 
-      
+
         <div className="space-y-6">
           <div>
             <p className="text-sm text-cyan-600 font-semibold uppercase tracking-wide mb-2">
@@ -120,24 +127,23 @@ export default function ProductDetailClient({ product }: { product: Product }) {
               {product.name}
             </h1>
 
-           
+
             {product.rating && (
               <div className="flex items-center gap-2 mb-4">
                 {Array.from({ length: 5 }, (_, i) => (
                   <Star
                     key={i}
-                    className={`w-5 h-5 ${
-                      i < Math.floor(product.rating!)
+                    className={`w-5 h-5 ${i < Math.floor(product.rating!)
                         ? 'fill-yellow-400 text-yellow-400'
                         : 'text-gray-300'
-                    }`}
+                      }`}
                   />
                 ))}
                 <span className="text-gray-600 font-medium">({product.rating})</span>
               </div>
             )}
 
-           
+
             <div className="mb-6">
               {discountedPrice ? (
                 <div className="flex items-center gap-3">
@@ -158,15 +164,14 @@ export default function ProductDetailClient({ product }: { product: Product }) {
               )}
             </div>
 
-           
+
             <p
-              className={`text-lg font-medium mb-6 ${
-                product.stock > 10
+              className={`text-lg font-medium mb-6 ${product.stock > 10
                   ? 'text-green-600'
                   : product.stock > 0
-                  ? 'text-orange-600'
-                  : 'text-red-600'
-              }`}
+                    ? 'text-orange-600'
+                    : 'text-red-600'
+                }`}
             >
               {product.stock > 0
                 ? product.stock > 10
@@ -175,13 +180,13 @@ export default function ProductDetailClient({ product }: { product: Product }) {
                 : 'Out of Stock'}
             </p>
 
-            
+
             <div className="mb-8">
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Description</h3>
               <p className="text-gray-600 leading-relaxed">{product.description}</p>
             </div>
 
-          
+
             {product.stock > 0 && (
               <div className="flex flex-col sm:flex-row gap-4 items-center">
                 <div className="flex items-center border border-gray-300 rounded-lg shadow-sm">
