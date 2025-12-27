@@ -97,7 +97,10 @@ export default function Navbar() {
 
                 {/* Logout */}
                 <button
-                  onClick={handleLogout}
+                  onClick={() => {
+                      handleLogout();
+                      
+                    }}
                   className="flex items-center space-x-2 text-red-600 hover:text-red-700 font-medium bg-red-50 hover:bg-red-100 px-4 py-2 rounded-lg transition"
                 >
                   <LogOut className="w-5 h-5" />
