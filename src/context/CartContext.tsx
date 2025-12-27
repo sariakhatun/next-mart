@@ -86,10 +86,24 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const removeFromCart = async (productId: string) => {
-    if (!userEmail) return;
-    setCart(prev => prev.filter(item => item.id !== productId));
-    await fetch(`/api/cart?userEmail=${userEmail}&productId=${productId}`, { method: 'DELETE' });
-  };
+  if (!userEmail) return;
+
+  // optimistic UI
+  setCart(prev => prev.filter(item => item.id !== productId));
+
+  const res = await fetch(
+    `/api/cart?userEmail=${userEmail}&productId=${productId}`,
+    { method: 'DELETE' }
+  );
+
+  const result = await res.json();
+
+  if (!res.ok || result.deletedCount === 0) {
+    console.error('Delete failed, refetching cart');
+    fetchCart(); // rollback / sync again
+  }
+};
+
   const removePurchasedItems = async (productIds: string[]) => {
   if (!userEmail) return;
 

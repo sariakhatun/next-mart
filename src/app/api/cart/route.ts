@@ -66,14 +66,24 @@ export async function DELETE(req: NextRequest) {
   const userEmail = searchParams.get('userEmail');
   const productId = searchParams.get('productId');
 
-  if (!userEmail || !productId) return NextResponse.json({ error: 'Missing data' }, { status: 400 });
+  if (!userEmail || !productId) {
+    return NextResponse.json({ error: 'Missing data' }, { status: 400 });
+  }
 
   try {
     const cartCollection = await dbConnect('cart');
-    await cartCollection.deleteOne({ userEmail, id: parseInt(productId) });
 
-    return NextResponse.json({ message: 'Removed from cart' }, { status: 200 });
+    const result = await cartCollection.deleteOne({
+      userEmail,
+      id: productId, // ✅ string match
+    });
+
+    return NextResponse.json(
+      { message: 'Removed from cart', deletedCount: result.deletedCount },
+      { status: 200 }
+    );
   } catch (err) {
     return NextResponse.json({ error: 'Failed to remove cart' }, { status: 500 });
   }
 }
+
